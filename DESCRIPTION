@@ -1,0 +1,38 @@
+Package: fallpaddy
+Title: Detecting Punctuated Evolution in Dinosaurs and Viruses
+Version: 1.0.0
+Authors@R:
+    person(
+        "Kevin", "Surya",
+        email = "sadikin.kevin@gmail.com",
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0003-1536-5929")
+    )
+Description: Contains the tools to simulate, detect, and visualize punctuated
+    evolution in any clades, from co-occurring species (e.g., present-day
+    mammals) to serially-sampled viruses (e.g., SARS-CoV-2 genomes) and
+    long-extinct taxa (e.g., Mesozoic dinosaurs).
+URL: https://github.com/suryakevin/fallpaddy
+BugReports: https://github.com/suryakevin/fallpaddy/issues
+Imports:
+    ape,
+    Cairo,
+    car,
+    ggExtra,
+    ggimage,
+    ggplot2,
+    ggthemes,
+    ggtree,
+    htmltools,
+    htmlwidgets,
+    magrittr,
+    motmot,
+    nlme,
+    phytools,
+    plotly,
+    rlang,
+    svglite
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
