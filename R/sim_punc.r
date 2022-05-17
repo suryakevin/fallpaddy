@@ -24,8 +24,8 @@
 #'   (e.g., `rate = 0.001` could mean 0.001 DNA substitutions per site per year
 #'   or 0.001 kilograms per million year)
 #' @param punc The proportion of total tree length attributable to
-#'   punctuational effects (ranges from 0 [completely gradual] to 1
-#'   [completely punctuational])
+#'   punctuational effects (ranges from 0 \[completely gradual\] to 1
+#'   \[completely punctuational\])
 #' @param sampling List of options:
 #'   \itemize{
 #'     \item "extant": all taxa in the dataset are sampled at the "same" time
@@ -40,6 +40,8 @@
 #' @author Kevin Surya
 #'
 #' @import ape motmot phytools
+#'
+#' @importFrom stats runif
 #'
 #' @export
 #'

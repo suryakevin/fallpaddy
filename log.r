@@ -114,20 +114,51 @@ use_mit_license()
 
 # render `fallpaddy` as a git repo ----
 use_git()
+#> √ Initialising Git repo
+#> √ Adding '.Rhistory', '.Rdata', '.httr-oauth', '.DS_Store' to '.gitignore'
+#> There are 12 uncommitted files:
+#> * '.gitignore'
+#> * '.Rbuildignore'
+#> * 'DESCRIPTION'
+#> * 'fallpaddy.Rproj'
+#> * 'LICENSE'
+#> * 'LICENSE.md'
+#> * 'log.r'
+#> * 'man/'
+#> * 'NAMESPACE'
+#> * 'R/'
+#> * ...
+#> Is it ok to commit them?
+#>
+#> 1: No
+#> 2: Definitely
+#> 3: Nope
+#>
+#> Selection: 2
+#> √ Adding files
+#> √ Making a commit with message 'Initial commit'
+#> * A restart of RStudio is required to activate the Git pane
+#> Restart now?
+#>
+#> 1: Absolutely not
+#> 2: Negative
+#> 3: Yes
+#>
+#> Selection: 3
 
 # create a new GitHub repo with the same name as the package ----
 
 # synchronize the local git repo with the GitHub repo ----
-#> git remote add origin git@github.com:suryakevin/fallpaddy.git
+#> git remote add origin https://github.com/suryakevin/fallpaddy.git
 #> git push -u origin master
 
 # Check `fallpaddy` ----
 check()
-#> i Updating drugcandy documentation
-#> i Loading drugcandy
+#> i Updating fallpaddy documentation
+#> i Loading fallpaddy
 #> Writing NAMESPACE
 #> Writing NAMESPACE
-#> -- Building ------------------------------------------------------------------- drugcandy --
+#> -- Building ------------------------------------------------------------------ fallpaddy --
 #> Setting env vars:
 #> * CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
 #> * CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
@@ -135,64 +166,65 @@ check()
 #> * CXX14FLAGS: -Wall -pedantic -fdiagnostics-color=always
 #> * CXX17FLAGS: -Wall -pedantic -fdiagnostics-color=always
 #> * CXX20FLAGS: -Wall -pedantic -fdiagnostics-color=always
-#> --------------------------------------------------------------------------------------------
-#> √  checking for file 'C:\Users\sadik\Documents\GitHub\drugcandy/DESCRIPTION' ...
-#> -  preparing 'drugcandy': (1.1s)
+#> -------------------------------------------------------------------------------------------
+#> √  checking for file 'C:\Users\sadik\Documents\GitHub\fallpaddy/DESCRIPTION' ...
+#> -  preparing 'fallpaddy':
 #> √  checking DESCRIPTION meta-information ...
 #> -  checking for LF line-endings in source and make files and shell scripts
 #> -  checking for empty or unneeded directories
-#> -  building 'drugcandy_1.0.0.tar.gz'
+#> -  building 'fallpaddy_1.0.0.tar.gz'
 #>
-#> -- Checking ------------------------------------------------------------------- drugcandy --
+#> -- Checking ------------------------------------------------------------------ fallpaddy --
 #> Setting env vars:
 #> * _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
 #> * _R_CHECK_CRAN_INCOMING_       : FALSE
 #> * _R_CHECK_FORCE_SUGGESTS_      : FALSE
 #> * NOT_CRAN                      : true
-#> -- R CMD check -----------------------------------------------------------------------------
-#> -  using log directory 'C:/Users/sadik/AppData/Local/Temp/RtmpGEEgw5/drugcandy.Rcheck'
+#> -- R CMD check ----------------------------------------------------------------------------
+#> -  using log directory 'C:/Users/sadik/AppData/Local/Temp/RtmpAdM8P9/fallpaddy.Rcheck'
 #> -  using R version 4.1.2 (2021-11-01)
 #> -  using platform: x86_64-w64-mingw32 (64-bit)
 #> -  using session charset: ISO8859-1
 #> -  using options '--no-manual --as-cran'
-#> √  checking for file 'drugcandy/DESCRIPTION' ...
-#> -  this is package 'drugcandy' version '1.0.0'
+#> √  checking for file 'fallpaddy/DESCRIPTION'
+#> -  this is package 'fallpaddy' version '1.0.0'
 #> -  package encoding: UTF-8
-#> √  checking package namespace information ...
-#> √  checking package dependencies (2.2s)
-#> √  checking if this is a source package
+#> √  checking package namespace information
+#> √  checking package dependencies (2.1s)
+#> √  checking if this is a source package ...
 #> √  checking if there is a namespace
-#> √  checking for executable files (585ms)
+#> √  checking for executable files (573ms)
 #> √  checking for hidden files and directories ...
 #> √  checking for portable file names ...
 #> √  checking serialization versions
-#> √  checking whether package 'drugcandy' can be installed (8.6s)
+#> √  checking whether package 'fallpaddy' can be installed (8.9s)
 #> √  checking installed package size ...
-#> √  checking package directory
+#> √  checking package directory (351ms)
 #> √  checking for future file timestamps ...
-#> √  checking DESCRIPTION meta-information (363ms)
+#> √  checking DESCRIPTION meta-information (341ms)
 #> √  checking top-level files
 #> √  checking for left-over files ...
 #> √  checking index information
 #> √  checking package subdirectories ...
 #> √  checking R files for non-ASCII characters ...
 #> √  checking R files for syntax errors ...
-#> √  checking whether the package can be loaded (2.1s)
-#> √  checking whether the package can be loaded with stated dependencies (2.1s)
+#> √  checking whether the package can be loaded (2.2s)
+#> √  checking whether the package can be loaded with stated dependencies (2s)
 #> √  checking whether the package can be unloaded cleanly (2.2s)
 #> √  checking whether the namespace can be loaded with stated dependencies (2.1s)
-#> √  checking whether the namespace can be unloaded cleanly (2.2s)
-#> √  checking dependencies in R code (2.1s)
+#> √  checking whether the namespace can be unloaded cleanly (2.3s)
+#> √  checking loading without being on the library search path (2.3s)
+#> √  checking dependencies in R code (2s)
 #> √  checking S3 generic/method consistency (3.1s)
 #> √  checking replacement functions (2.1s)
 #> √  checking foreign function calls (2.1s)
-#> √  checking R code for possible problems (10.3s)
+#> √  checking R code for possible problems (10.5s)
 #> √  checking Rd files ...
 #> √  checking Rd metadata ...
 #> √  checking Rd line widths ...
 #> √  checking Rd cross-references ...
-#> √  checking for missing documentation entries (2s)
-#> √  checking for code/documentation mismatches (6.1s)
+#> √  checking for missing documentation entries (2.1s)
+#> √  checking for code/documentation mismatches (6.3s)
 #> √  checking Rd \usage sections (3.4s)
 #> √  checking Rd contents ...
 #> √  checking for unstated dependencies in examples ...
@@ -201,7 +233,7 @@ check()
 #> √  checking for detritus in the temp directory
 #>
 #>
-#> -- R CMD check results ------------------------------------------------ drugcandy 1.0.0 ----
-#> Duration: 1m 0.2s
+#> -- R CMD check results ----------------------------------------------- fallpaddy 1.0.0 ----
+#> Duration: 1m 0.6s
 #>
 #> 0 errors √ | 0 warnings √ | 0 notes √
