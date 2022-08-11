@@ -2,9 +2,9 @@
 #'
 #' @description This function creates an interactive plot of the data.
 #'
-#' @param data A data frame with taxon name in the row name, path length in the
-#'   1st column, node count in the 2nd, and group assignment in the 3rd
-#'   (optional)
+#' @param data A data frame path length in the 1st column, node count in the
+#'   2nd, group assignment in the 3rd (optional), and taxon names as the row
+#'   names
 #' @param group If `TRUE`, the colors of the data points represent the group
 #'   assignment
 #' @param size Size of data point
@@ -87,9 +87,9 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
 #'
 #' @description This function creates a 3D interactive plot of the data.
 #'
-#' @param data A data frame with taxon name in the row name, path length in the
-#'   1st column, node count in the 2nd, time in the 3rd, and group assignment
-#'   in the 4th (optional)
+#' @param data A data frame with path length in the 1st column, node count in
+#'   the 2nd, time in the 3rd, group assignment in the 4th (optional), and
+#'   taxon names as the row names
 #' @param group If `TRUE`, the colors of the data points represent the group
 #'   assignment instead of the node count
 #' @param size Size of data point

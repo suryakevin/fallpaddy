@@ -10,12 +10,13 @@ plot_punc_model(
   size = 1,
   alpha = 1,
   fit = TRUE,
-  type = c("extant", "serial", "fossil")
+  type = c("extant_molecular", "extant_morphological", "serial", "fossil")
 )
 }
 \arguments{
 \item{data}{A data frame with path length in the 1st column, node count in
-the 2nd, and time in the 3rd}
+the 2nd, time in the 3rd (optional), and group assignment in the 4th
+(optional)}
 
 \item{output_reg}{A list outputted from the \code{fit_punc_model} function}
 
@@ -23,14 +24,19 @@ the 2nd, and time in the 3rd}
 
 \item{alpha}{Transparency of data point (0: transparent; 1: opaque)}
 
-\item{fit}{If \code{TRUE}, the plot shows the phylogenetically-normalized fitted
-line but not the fitted plane derived from a multiple regression model
-(\code{path ~ time + node})}
+\item{fit}{If \code{TRUE}, the plot shows phylogenetically-normalized fitted
+lines for \code{path ~ 1}, \code{path ~ node}, and \code{path ~ time} models; for more
+complex models, such as those that estimate a fit plane, it is easier to
+write a custom script}
 
 \item{type}{List of options:
 \itemize{
-\item "extant": all taxa in the dataset are sampled at the "same" time
-(e.g., present-day mammal species)
+\item "extant_molecular": all taxa in the dataset are sampled at the
+"same" time (e.g., present-day mammal species), and the phylogenetic
+tree branch lengths reflect molecular evolution
+\item "extant_morphological": all taxa in the dataset are sampled at the
+"same" time (e.g., present-day mammal species), and the phylogenetic
+tree branch lengths reflect morphological evolution
 \item "serial": taxa are serially-sampled, and the timescale is in days
 to years (e.g., SARS-CoV-2 genomes)
 \item "fossil": taxa are serially-sampled, and the timescale is in

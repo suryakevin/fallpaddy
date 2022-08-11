@@ -19,8 +19,8 @@ ancestor is 100 years or 100 million years ago)}
 or 0.001 kilograms per million year)}
 
 \item{punc}{The proportion of total tree length attributable to
-punctuational effects (ranges from 0 \link{completely gradual} to 1
-\link{completely punctuational})}
+punctuational effects (ranges from 0 [completely gradual] to 1
+[completely punctuational])}
 
 \item{sampling}{List of options:
 \itemize{

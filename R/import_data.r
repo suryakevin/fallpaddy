@@ -56,3 +56,24 @@ import_data_csv <- function(file) {
   data <- read.csv(file = file)
   return(data)
 }
+
+#' Import a .xls or .xlsx file
+#'
+#' @description This function is an alias of `read_excel` from the `R` package
+#'   `readxl`.
+#'
+#' @param file Input file directory
+#' @param sheet Excel sheet
+#'
+#' @return This function returns an object of class `tbl_df`.
+#'
+#' @author Kevin Surya
+#'
+#' @importFrom readxl read_excel
+#'
+#' @export
+#'
+import_data_excel <- function(file, sheet) {
+  data <- read_excel(path = file, sheet = sheet)
+  return(data)
+}

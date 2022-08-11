@@ -19,7 +19,7 @@ parameter estimates.
 }
 \description{
 This function checks for the node-density artifact, where
-branches in parts of a phylogenetic tree with few tips are shorter than
+branches in parts of a phylogenetic tree with fewer tips are shorter than
 their actual lengths. This artifact can bias the regression model towards
 detecting punctuated evolution even if this is not the case. A symptom of
 this artifact would be a positive curvilinear relationship between the

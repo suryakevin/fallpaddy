@@ -15,13 +15,14 @@ genomes) and long-extinct taxa (e.g., Mesozoic dinosaurs).
 \itemize{
 \item Main functions:
 \itemize{
-\item Extracting data: \code{get_node_count} and \code{get_path_length}
+\item Extracting data: \code{get_node_count}, \code{get_path_length}, and
+\code{get_sampling_time}
 \item Preparing dataset: \code{reorder_data}
 \item Editing the phylogenetic variance-covariance matrix:
 \code{decomp_vcv} and \code{create_dmat}
 \item Detecting punctuated evolution: \code{fit_punc_model}
-\item Calculating test statistics: \code{calc_r2}, \code{calc_partialr2}, and
-\code{est_punc_contrib}
+\item Calculating test statistics: \code{calc_r2}, \code{calc_partialr2},
+\code{est_branching_rate} and \code{est_punc_contrib}
 \item Comparing models: \code{compare_models}
 \item Checking biases and diagnostics: \code{calc_vif}, \code{est_node_density},
 \code{plot_diagnostics}, and \code{plot_node_density}
@@ -32,8 +33,8 @@ genomes) and long-extinct taxa (e.g., Mesozoic dinosaurs).
 }
 \item Auxillary functions:
 \itemize{
-\item Importing dataset: \code{import_data}, \code{import_data_bt}, and
-\code{import_data_csv}
+\item Importing dataset: \code{import_data}, \code{import_data_bt},
+\code{import_data_csv}, and \code{import_data_excel}
 \item Importing phylogenetic tree: \code{import_tree_nex} and
 \code{import_tree_nwk}
 \item Exporting dataset: \code{export_data} and \code{export_data_bt}
@@ -45,7 +46,7 @@ genomes) and long-extinct taxa (e.g., Mesozoic dinosaurs).
 
 \references{
 Surya, K., Gardner, J.D. & Organ, C. Detecting punctuated
-evolution in SARS-CoV-2 over the first year of the pandemic. Submitted.
+evolution in SARS-CoV-2 over the first year of the pandemic. In review.
 }
 \author{
 Kevin Surya

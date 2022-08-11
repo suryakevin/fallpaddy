@@ -7,46 +7,56 @@
 #'   morphological or molecular, between two taxa where one of them has
 #'   undergone one additional branching event. A taxon's net divergence is
 #'   proxied by its phylogenetic path length or root-to-tip distance. And the
-#'   cumulative number of branching events along the path is the node count.
+#'   cumulative number of branching events along a taxon's root-to-tip path is
+#'   its node count.
 #'
-#' This expected difference should account for the strict clock, morphological
-#'   or molecular. When all taxa in the tree are co-occurring (e.g., all
+#' This expected difference should account for the strict clock (morphological
+#'   or molecular). When all taxa in the tree are co-occurring (e.g., all
 #'   present-day mammal species), the expected path length under the strict
-#'   clock is the mean (`path ~ 1`). Note that the average should be
-#'   phylogenetically-normalized. This mean-only model is the simplest.
+#'   clock is just the mean (`path ~ 1`). Note that this mean should be
+#'   phylogenetically-normalized. This mean-only model is the simplest possible
+#'   model.
 #'
 #' Punctuated evolution means that more change accumulates during branching
 #'   events. As a result, the evolutionary rate is not clock-like. So, we
-#'   hypothesize that node count predicts deviation from the clock
+#'   hypothesize that deviations from a clock-like rate depend on node count
 #'   (`path ~ node`).
 #'
 #' However, the strict clock has a different expectation when the taxa in the
-#'   tree are not co-occurring. For example, the taxa are sampled serially like
-#'   SARS-CoV-2 genomes during the COVID-19 pandemic or sporadically like the
-#'   deposition of dinosaur fossils in ancient sediments. In these cases, the
-#'   strict clock expects the amount of divergence to scale proportionally with
-#'   time (`path ~ sampling time`).
+#'   tree are not co-occurring. Examples are when taxa are serially sampled
+#'   like SARS-CoV-2 genomes during the COVID-19 pandemic or sporadically
+#'   preserved as in the deposition of dinosaur fossils in ancient sediments.
+#'   In these cases, the strict clock expects the amount of divergence to scale
+#'   proportionally with time (`path ~ sampling time`).
 #'
-#' In such cases, the detection of punctuated evolution becomes the regression
-#'   of path length on sampling time and node count (`path ~ time + node`).
+#' In the cases above, the detection of punctuated evolution turns into
+#'   estimating the node count "effect" accounting for sampling time
+#'   (`path ~ time + node`).
 #'
 #' We can fit more complex models where we allow the degree of punctuational
 #'   effect to vary with time (e.g., `path ~ time + node + time * node`) or
-#'   space (e.g., `path ~ time + node * continent`). However, it is best to
-#'   create your custom function or write a custom script at this point.
+#'   across levels of a grouping variable such as continents or lineages. For
+#'   the latter, we can fit a separate-intercepts (e.g.,
+#'   `path ~ time + node + continent`) or separate-slopes model (e.g.,
+#'   `path ~ time + node + continent + continent * node`).
 #'
 #' @param data A data frame with path length in the 1st column, node count in
-#'   the 2nd, time in the 3rd (optional), and taxon names as the row names;
-#'   make sure that the row order matches the tree tip labels (use the function
-#'   `reorder_data`)
+#'   the 2nd, time in the 3rd (optional), group assignment in the 4th
+#'   (optional), and taxon names as the row names; make sure that the row order
+#'   matches the tree tip labels (use the function `reorder_data`)
 #' @param vcv_parts A list outputted from the `decomp_vcv` function
 #' @param D A normalizing matrix D outputted from the `create_dmat` function
 #' @param model Model options:
 #' \itemize{
-#'   \item "p": path ~ 1
-#'   \item "pn": path ~ node
-#'   \item "pt": path ~ time
-#'   \item "ptn": path ~ time + node
+#'   \item "p": `path ~ 1`
+#'   \item "pn": `path ~ node`
+#'   \item "pt": `path ~ time`
+#'   \item "ptn": `path ~ time + node`
+#'   \item "ptni": `path ~ time * node`
+#'   \item "png": `path ~ node + group`
+#'   \item "pngi": `path ~ node * group`
+#'   \item "ptng": `path ~ time + node + group`
+#'   \item "ptngi": `path ~ time + node * group`
 #' }
 #'
 #' @return This function returns a list containing the fitted model (an object
@@ -66,12 +76,22 @@ fit_punc_model <- function(
   data,
   vcv_parts,
   D,
-  model = c("p", "pn", "pt", "ptn")
+  model = c("p", "pn", "pt", "ptn", "ptni", "png", "pngi", "ptng", "ptngi")
 ) {
   # prepares data
-  colnames(data)[1] <- "path"
-  colnames(data)[2] <- "node"
-  colnames(data)[3] <- "time"
+  if (ncol(data) == 2) {
+    colnames(data)[1] <- "path"
+    colnames(data)[2] <- "node"
+  } else if (ncol(data) == 3) {
+    colnames(data)[1] <- "path"
+    colnames(data)[2] <- "node"
+    colnames(data)[3] <- "time"
+  } else {
+    colnames(data)[1] <- "path"
+    colnames(data)[2] <- "node"
+    colnames(data)[3] <- "time"
+    colnames(data)[4] <- "group"
+  }
   data$taxon <- rownames(data)
   corr <- vcv_parts$corr
   data$w <- vcv_parts$w
@@ -100,9 +120,49 @@ fit_punc_model <- function(
       weights = varFixed(~w),
       method = "ML"
     )
-  } else {  # path ~ time + node
+  } else if (model == "ptn") {  # path ~ time + node
     model <- gls(
       model = path ~ time + node,
+      data = data,
+      correlation = corr,
+      weights = varFixed(~w),
+      method = "ML"
+    )
+  } else if (model == "ptni") {  # path ~ time * node
+    model <- gls(
+      model = path ~ time * node,
+      data = data,
+      correlation = corr,
+      weights = varFixed(~w),
+      method = "ML"
+    )
+  } else if (model == "png") {  # path ~ node + group
+    model <- gls(
+      model = path ~ node + group,
+      data = data,
+      correlation = corr,
+      weights = varFixed(~w),
+      method = "ML"
+    )
+  } else if (model == "pngi") {  # path ~ node * group
+    model <- gls(
+      model = path ~ node * group,
+      data = data,
+      correlation = corr,
+      weights = varFixed(~w),
+      method = "ML"
+    )
+  } else if (model == "ptng") {  # path ~ time + node + group
+    model <- gls(
+      model = path ~ time + node + group,
+      data = data,
+      correlation = corr,
+      weights = varFixed(~w),
+      method = "ML"
+    )
+  } else {  # path ~ time + node * group
+    model <- gls(
+      model = path ~ time + node * group,
       data = data,
       correlation = corr,
       weights = varFixed(~w),

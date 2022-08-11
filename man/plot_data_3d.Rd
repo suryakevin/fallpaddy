@@ -7,9 +7,9 @@
 plot_data_3d(data, group = FALSE, size = 1.25)
 }
 \arguments{
-\item{data}{A data frame with taxon name in the row name, path length in the
-1st column, node count in the 2nd, time in the 3rd, and group assignment
-in the 4th (optional)}
+\item{data}{A data frame with path length in the 1st column, node count in
+the 2nd, time in the 3rd, group assignment in the 4th (optional), and
+taxon names as the row names}
 
 \item{group}{If \code{TRUE}, the colors of the data points represent the group
 assignment instead of the node count}

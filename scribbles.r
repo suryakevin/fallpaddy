@@ -1,7 +1,7 @@
 # Written by Kevin Surya
 
-# This scribble file contains some of my unsuccessful attempts and tuning
-#   efforts at making the `sim_punc` function.
+# This scribble file contains unsuccessful attempts, `sim_punc` function
+#   tuning, and codes for cleaning external datasets.
 
 # Trial #1 ====================================================================
 
@@ -10,9 +10,7 @@
 #   univariate Poisson distribution. The correct distribution may be
 #   multivariate, appropriate for modeling non-independence. Second, the
 #   distribution must have some conditions that specify, for example, that
-#   sister taxa in the phylogenetic tree must have the same node counts. So, my
-#   solution is to simulate a random tree and extract the node count from that
-#   tree.
+#   sister taxa in the phylogenetic tree must have the same node counts.
 
 # Load packages and functions ----
 library(ape)
@@ -891,3 +889,402 @@ c(punc_contrib, punc_contrib_scaled)
 
 # The estimated proportion of total tree length attributable to punctuational
 #   effects does not depend on the tree depth.
+
+# Trial #4 ====================================================================
+
+# Here are the codes for cleaning external datasets.
+
+# Load package and function ----
+library(phytools)
+source("R/export_data.r")
+source("R/export_tree.r")
+source("R/import_data.r")
+source("R/import_tree.r")
+
+# Import a lepidosaur molecular tree (molecular extant-only dataset) ----
+# See Pyron et al. (2013) (https://doi.org/10.1186/1471-2148-13-93)
+#   Clade: Lepidosauria (mostly snakes and lizards)
+#   Number of tips: 4,162 (4,161 squamate and 1 tuatara species)
+#   Data: 12 genes (5 mtDNA and 7 nuclear); 12,896 bp
+#   Branch length unit: Substitutions/site
+#   Method: Maximum likelihood (RAxMl)
+#   Notes: Pyron et al. (2013) focus on broad taxonomic sampling, resulting in
+#     a tree with a more extensive record of net speciation events than many
+#     other Lepidosauria trees. They found that the terminal branch lengths do
+#     not correlate with the completeness of the molecular data.
+tree_lepidosaur_mol <- import_tree_nwk(
+  file = "https://static-content.springer.com/esm/art%3A10.1186%2F1471-2148-13-93/MediaObjects/12862_2013_2346_MOESM1_ESM.txt"
+)
+tree_lepidosaur_mol$node.label <- NULL
+tree_lepidosaur_mol
+#>
+#> Phylogenetic tree with 4162 tips and 4161 internal nodes.
+#>
+#> Tip labels:
+#>   Sphenodon_punctatus, Dibamus_bourreti, Dibamus_greeri, Dibamus_montanus, Anelytropsis_papillosus, Dibamus_tiomanensis, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_lepidosaur_mol)
+#> [1] TRUE
+
+# Import a mammal phenotypic-scaled tree and trait dataset (morphological
+#   extant-only dataset)
+#   ----
+# See Kubo et al. (2019) (https://doi.org/10.1073/pnas.1814329116)
+#   Clade: Mammalia
+#   Number of tips: 880 terrestrial mammal species
+#   Data: Log10 body mass (kg); foot postures (plantigrady [walking on the
+#     whole foot], digitigrady [walking on toes], and unguligrady [walking on
+#     hooved tiptoes])
+#   Branch length unit: original branch length unit * unitless rate scalar --->
+#     relative amount of phenotypic evolution
+#   Method: Variable rates model (see Venditti et al. 2011
+#     [https://doi.org/10.1038/nature10516])
+download.file(
+  url = "https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd02.txt",
+  destfile = "tree_mammal_time.txt"
+)
+#> trying URL 'https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd02.txt'
+#> Content type 'text/plain; charset=UTF-8' length 59248 bytes (57 KB)
+#> downloaded 57 KB
+#>
+download.file(
+  url = "https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd06.txt",
+  destfile = "data_mammal_foot_posture.txt"
+)
+#> trying URL 'https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd06.txt'
+#> Content type 'text/plain; charset=UTF-8' length 18175 bytes (17 KB)
+#> downloaded 17 KB
+#>
+download.file(
+  url = "https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd10.txt",
+  destfile = "data_mammal_log_body_mass_graviportal.txt"
+)
+#> trying URL 'https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd10.txt'
+#> Content type 'text/plain; charset=UTF-8' length 33893 bytes (33 KB)
+#> downloaded 33 KB
+#>
+download.file(
+  url = "https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd11.txt",
+  destfile = "bayestraits_infile_mammal.txt"
+)
+#> trying URL 'https://www.pnas.org/doi/suppl/10.1073/pnas.1814329116/suppl_file/pnas.1814329116.sd11.txt'
+#> Content type 'text/plain; charset=UTF-8' length 162 bytes
+#> downloaded 162 bytes
+#>
+tree_mammal_time <- import_tree_nex(file = "tree_mammal_time.txt")
+#>
+#> Phylogenetic tree with 880 tips and 775 internal nodes.
+#>
+#> Tip labels:
+#>   Solenodon_paradoxus, Erinaceus_concolor, Atelerix_algirus, Atelerix_albiventris, Hemiechinus_auritus, Paraechinus_aethiopicus, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_mammal_time)
+#> [1] FALSE
+# The tree above contains polytomies (or multifurcations). I arbitrarily
+#   resolved each polytomy into a series of bifurcations with zero branch
+#   lengths. The resulting bifurcations follow the order in which the tips
+#   appear in the tree.
+tree_mammal_time <- multi2di(phy = tree_mammal_time, random = FALSE)
+#>
+#> Phylogenetic tree with 880 tips and 879 internal nodes.
+#>
+#> Tip labels:
+#>   Solenodon_paradoxus, Erinaceus_concolor, Atelerix_algirus, Atelerix_albiventris, Hemiechinus_auritus, Paraechinus_aethiopicus, ...
+#>
+#> Rooted; includes branch lengths.
+export_tree(tree = tree_mammal_time, file = "tree_mammal_time.nex")
+posture <- import_data(file = "data_mammal_foot_posture.txt")
+mass_gravi <- import_data(file = "data_mammal_log_body_mass_graviportal.txt")
+data_mammal <- data.frame(mass = mass_gravi$M_Body, posture = posture$Posture)
+colnames(data_mammal)[1] <- "log10_mass"
+data_mammal$posture <- as.factor(data_mammal$posture)
+rownames(data_mammal) <- rownames(posture)
+head(data_mammal)
+#>                          log10_mass posture
+#> Solenodon_paradoxus     -0.04576232       D
+#> Erinaceus_concolor      -0.17653229       D
+#> Atelerix_algirus        -0.04384118       D
+#> Atelerix_albiventris    -0.53248069       D
+#> Hemiechinus_auritus     -0.49209018       D
+#> Paraechinus_aethiopicus -0.45296410       D
+str(data_mammal)
+#> 'data.frame':   880 obs. of  2 variables:
+#>  $ log10_mass: num  -0.0458 -0.1765 -0.0438 -0.5325 -0.4921 ...
+#>  $ posture   : Factor w/ 3 levels "D","P","U": 1 1 1 1 1 1 2 2 2 2 ...
+mass <- data_mammal[, -2]
+names(mass) <- rownames(data_mammal)
+export_data_bt(data = mass, file = "data_mammal_log_body_mass.txt")
+# To scale the mammal timetree so that the branch lengths reflect body mass
+#   evolution, I used the variable rates model (Venditti et al., 2011)
+#   (https://doi.org/10.1038/nature10516) in the program `BayesTraits`
+#   (http://www.evolution.reading.ac.uk/SoftwareMain.html). This model allows
+#   the rates of body mass evolution to vary by stretching and compressing
+#   branches during a reversible-jump Markov chain Monte Carlo (RJMCMC) run.
+#   The tree for downstream analyses later is a consensus, where each branch
+#   length is the average across the MCMC posterior samples. Below is the
+#   command line to run the variable rates model:
+#     `bayestraits tree_mammal_time.nex data_mammal_log10_body_mass.txt <`
+#       `bayestraits_infile_mammal.txt`
+#   We need to edit the infile, changing the first line from `9` (Continuous:
+#     Regression) to `7` (Independent Contrasts).
+#   To reduce computational effort, I did not run the stepping stone algorithm
+#     for estimating the log marginal likelihood.
+tree_mammal_morpho <- import_tree_nex(file = "tree_mammal_morpho.trees")
+# The tree downloaded above is the consensus of 10,000 posterior trees. I used
+#   the program `BayesTrees` to do this. The MCMC chain seems to have converged
+#   as the effective sample sizes (ESSs) for the estimated parameters
+#   (log-likelihood, ancestral mammal log body mass, and the number of
+#   reversible-jump scalars) are all above 4,000, except for the background
+#   Brownian motion variance (ESS = 48). The trace for this parameter shows
+#   that the posterior distribution is right-skewed, where some iterations
+#   record high values. Aside from these fluctuations, the MCMC chain has found
+#   a stable distribution.
+tree_mammal_morpho
+#>
+#> Phylogenetic tree with 880 tips and 879 internal nodes.
+#>
+#> Tip labels:
+#>   Acinonyx_jubatus, Acomys_cahirinus, Acomys_minous, Acomys_russatus, Acrobates_pygmaeus, Addax_nasomaculatus, ...
+#>
+#> Rooted; includes branch lengths.
+data_mammal <-
+  data_mammal[match(tree_mammal_morpho$tip.label, rownames(data_mammal)), ]
+
+# Import Zika virus molecular and time-calibrated trees (molecular
+#   serially-sampled dataset) ----
+# See Grubaugh et al. (2017) (https://doi.org/10.1038/nature22400)
+#   Clade: Zika virus (ZIKV)
+#   Number of tips: 104 genomes (2013-2016; the Pacific, Brazil, other South
+#     and Central Americas, the Caribbean, and the United States)
+#   Data: complete genomes; 10,269 bases
+#   Branch length unit: Substitutions/site; years
+#   Method: Maximum likelihood (PhyML); relaxed molecular clock + Bayesian
+#     skyline (BEAST) ---> maximum clade credibility tree
+#   Notes: ZIKV, primarily transmitted through the mosquito vector *Aedes
+#     aegypti*, is responsible for severe birth-related defects in humans. From
+#     2015 to 2016, ZIKV cases spread from Brazil to other South and Central
+#     American countries, the Caribbean islands, and Florida, USA.
+temp <- tempfile()
+download.file(
+  url = "https://static-content.springer.com/esm/art%3A10.1038%2Fnature22400/MediaObjects/41586_2017_BFnature22400_MOESM3_ESM.zip",
+  destfile = temp
+)
+#> trying URL 'https://static-content.springer.com/esm/art%3A10.1038%2Fnature22400/MediaObjects/41586_2017_BFnature22400_MOESM3_ESM.zip'
+#> Content type 'application/zip' length 162223 bytes (158 KB)
+#> downloaded 158 KB
+#>
+tree_zika_mol <- import_tree_nwk(
+  file = unzip(
+    zipfile = temp,
+    files = "ZIKV.Andersen-USAMRIID-DR_BROAD.publishedGenBank.noSEA.bootstrap_100.tree"
+  )
+)
+tree_zika_mol$node.label <- NULL
+tree_zika_mol
+#>
+#> Phylogenetic tree with 104 tips and 103 internal nodes.
+#>
+#> Tip labels:
+#>   ZIKV|KX447517|1_0038_PF|French_Polynesia_Moorea|2014-01, ZIKV|XXX|FLUR057|USA_Florida_Miami|2016-10-05, ZIKV|XXX|FLUR0002|USA_Florida_Miami|2016-07-28, ZIKV|XXX|FL08M|USA_Florida_Miami|2016-10-05, ZIKV|KX922703|FL021U|USA_Florida_Miami|2016-07-19, ZIKV|XXX|FLUR0008|USA_Florida_Miami|2016-08-04, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_zika_mol)
+#> [1] TRUE
+tree_zika_time <- import_tree_nex(
+  file = unzip(
+    zipfile = temp,
+    files = "ZIKV.Andersen-USAMRIID-DR_BROAD.publishedGenBank.noSEA.UCLN-Skyline.MCC.tree"
+  )
+)
+tree_zika_time
+#>
+#> Phylogenetic tree with 104 tips and 103 internal nodes.
+#>
+#> Tip labels:
+#>   ZIKV|XXX|FL06M|USA_Florida_Miami|2016-09-20, ZIKV|XXX|FLUR063|USA_Florida_Miami|2016-10-03, ZIKV|XXX|FLUR0015|USA_Florida_Miami|2016-08-24, ZIKV|KX838904|FL01M|USA_Florida_Miami|2016-08-22, ZIKB|XXX|FLWB042|USA_Florida_Miami|2016-09-26, ZIKV|XXX|FLUR0013|USA_Florida_Miami|2016-08-23, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_zika_time)
+#> [1] TRUE
+unlink(temp)
+
+# Import a dinosaur phenotypic-scaled tree and trait dataset (morphological
+#   extinct-only dataset)
+#   ----
+# See Benson et al. (2014) (https://doi.org/10.1371/journal.pbio.1001853);
+#     Benson et al. (2017) (https://doi.org/10.1111/pala.12329)
+#     O'Donovan et al. (2018) (https://doi.org/10.1038/s41559-017-0454-6)
+#   Clade: Dinosauria (Mesozoic dinosaurs)
+#   Number of tips: 402 dinosaur taxa
+#   Data: Log10 body mass (kg); clade (Ornithischia, Sauropodomorpha, and
+#     Theropoda)
+#   Branch length unit: original branch length unit * unitless rate scalar --->
+#     relative amount of phenotypic evolution
+#   Method: Variable rates model (see Venditti et al. 2011
+#     [https://doi.org/10.1038/nature10516])
+#   Notes: Benson et al. (2014) and Benson et al. (2017) predicted dinosaur
+#     adult body masses using estimated relationships between body mass and
+#     limb skeletal measurements across living tetrapods. See their manuscripts
+#     for more details. Regarding the dinosaur timetree, Benson et al. (2014)
+#     constructed a composite cladogram. O'Donovan et al. (2018) acquired this
+#     cladogram, first and last appearance date estimates, and scaled the
+#     branch lengths using the 'mbl' method, enforcing a minimum branch length
+#     of one million years. The tree file is unavailable online, but is
+#     available upon request from the authors.
+download.file(
+  url = "https://datadryad.org/stash/downloads/file_stream/74477",
+  destfile = "Dataset S1.zip",
+  mode = "wb"
+)
+#> trying URL 'https://datadryad.org/stash/downloads/file_stream/74477'
+#> Content type 'application/zip' length 398045 bytes (388 KB)
+#> downloaded 388 KB
+#>
+data_dinosaur_raw <- import_data_excel(
+  file = unzip(
+    zipfile = "Dataset S1.zip",
+    files = "Dataset S1/Dataset S1.xls"
+  ),
+  sheet = "Dataset S1"
+)
+data_dinosaur_raw
+#> # A tibble: 993 x 37
+#>    Index Taxon   Name_in_tree  Clade  Subclade  Subclade_2 Max_age Min_age FL
+#>    <dbl> <chr>   <chr>         <chr>  <chr>     <chr>      <chr>   <chr>   <chr>
+#>  1     1 Apatos~ not           Sauro~ Macronar~ Macronaria Kimmer~ Tithon~ NA
+#>  2     2 Cetios~ not           Sauro~ Eusaurop~ Eusauropo~ Early_~ Early_~ NA
+#>  3     3 Cetios~ not           Sauro~ Eusaurop~ Eusauropo~ Late_B~ Late_B~ NA
+#>  4     4 Gyposa~ not           Sauro~ Sauropod~ Sauropodo~ Hettan~ Hettan~ 235.5
+#>  5     5 Huangh~ not           Sauro~ Titanosa~ Titanosau~ Cenoma~ Turoni~ NA
+#>  6     6 Morosa~ not           Sauro~ Eusaurop~ Eusauropo~ Kimmer~ Tithon~ NA
+#>  7     7 Peloro~ Pelorosaurus~ Sauro~ Titanosa~ Titanosau~ Berria~ Valang~ NA
+#>  8     8 Yunnan~ not           Sauro~ Sauropod~ Sauropodo~ Middle~ Middle~ NA
+#>  9     9 Aardon~ Aardonyx      Sauro~ Sauropod~ Sauropodo~ Hettan~ Sinemu~ NA
+#> 10    10 Abrosa~ not           Sauro~ Macronar~ Macronaria Bajoci~ Callov~ NA
+#> # ... with 983 more rows, and 28 more variables: FC <chr>, FML <chr>,
+#> #   FAP <chr>, TL_TLE <chr>, TC <chr>, HL <chr>, HC <chr>, HML <chr>,
+#> #   HAP <chr>, RC <chr>, RL_RLE <chr>, MtL <chr>, Source <chr>,
+#> #   Age/notes <chr>, Juvenile <dbl>, Bonebed <dbl>, Institution <chr>,
+#> #   Specimen <chr>, FCoval <chr>, HCoval <chr>, FCe <chr>, FCe_meserr <chr>,
+#> #   FCe_method <chr>, HCe <chr>, HCe_meserr <chr>, HCe_method <chr>,
+#> #   Mass <chr>, Mass_lse (log10) <chr>
+data_dinosaur <- as.data.frame(data_dinosaur_raw[, c(3, 36, 4)])
+colnames(data_dinosaur) <- c("taxon", "log10_mass", "clade")
+data_dinosaur$taxon <- gsub(
+  pattern = "not",
+  replacement = NA,
+  x = data_dinosaur$taxon
+)
+data_dinosaur$log10_mass <- gsub(
+  pattern = "NA",
+  replacement = NA,
+  x = data_dinosaur$log10_mass
+)
+data_dinosaur$log10_mass <- log10(as.numeric(data_dinosaur$log10_mass))
+data_dinosaur$clade <- as.factor(data_dinosaur$clade)
+data_dinosaur <- na.omit(data_dinosaur)
+table(data_dinosaur$clade)
+#> Dinosauromorpha    Ornithischia Sauropodomorpha       Theropoda
+#>               0             133             108             194
+  # All ten dinosauromoph taxa are already dropped from the dataset
+data_dinosaur$taxon[data_dinosaur$taxon == "Mahkala"] <- "Mahakala"
+data_dinosaur$taxon[data_dinosaur$taxon == "Zanzabazaar"] <- "Zanabazar"
+data_dinosaur$taxon[data_dinosaur$taxon == "Compsognathus"] <-
+  "Compsognathus_longipes"
+data_dinosaur$taxon[data_dinosaur$taxon == "Huixagnathus"] <- "Huaxiagnathus"
+data_dinosaur$taxon[data_dinosaur$taxon == "Piatnizkysaurus"] <-
+  "Piatnitzkysaurus"
+rownames(data_dinosaur) <- data_dinosaur$taxon
+data_dinosaur <- data_dinosaur[, -1]
+head(data_dinosaur)
+#>                         log10_mass           clade
+#> Pelorosaurus_becklesii    3.715506 Sauropodomorpha
+#> Adeopapposaurus           1.597697 Sauropodomorpha
+#> Aeolosaurus_maximus       4.235043 Sauropodomorpha
+#> Aeolosaurus_rionegrinus   4.099433 Sauropodomorpha
+#> Alamosaurus               4.546096 Sauropodomorpha
+#> Amargasaurus              4.008371 Sauropodomorpha
+str(data_dinosaur)
+#> 'data.frame':   435 obs. of  2 variables:
+#>  $ log10_mass: num  3.72 1.6 4.24 4.1 4.55 ...
+#>  $ clade     : Factor w/ 4 levels "Dinosauromorpha",..: 3 3 3 3 3 3 3 3 3 3 ...
+tree_dinosaur_time <- import_tree_nex(file = "tree_dinosaur_time.nex")
+tree_dinosaur_time$tip.label[tree_dinosaur_time$tip.label == "Piveausaurus"] <-
+  "Piveteausaurus"
+tree_dinosaur_time
+#>
+#> Phylogenetic tree with 624 tips and 513 internal nodes.
+#>
+#> Tip labels:
+#>   Lagerpeton_chanarensis, Dromomeron_gregorii, Dromomeron_romeri, Marasuchus_lilloensis, Lewisuchus_admixtus, Asilisaurus_kongwe, ...
+#>
+#> Rooted; includes branch lengths.
+tree_dinosaur_time <- drop.tip(
+  phy = tree_dinosaur_time,
+  tip =
+    tree_dinosaur_time$tip.label[!tree_dinosaur_time$tip.label %in% rownames(data_dinosaur)]
+)
+tree_dinosaur_time
+#>
+#> Phylogenetic tree with 402 tips and 347 internal nodes.
+#>
+#> Tip labels:
+#>   Pisanosaurus_mertii, Fruitadens_haagarorum, Tianyulong_confuciusi, Abrictosaurus_consors, Heterodontosaurus_tucki, Lesothosaurus_diagnosticus, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_dinosaur_time)
+#> [1] FALSE
+tree_dinosaur_time <- multi2di(phy = tree_dinosaur_time, random = FALSE)
+tree_dinosaur_time
+#>
+#> Phylogenetic tree with 402 tips and 401 internal nodes.
+#>
+#> Tip labels:
+#>   Pisanosaurus_mertii, Fruitadens_haagarorum, Tianyulong_confuciusi, Abrictosaurus_consors, Heterodontosaurus_tucki, Lesothosaurus_diagnosticus, ...
+#>
+#> Rooted; includes branch lengths.
+is.binary(phy = tree_dinosaur_time)
+#> [1] TRUE
+export_tree(tree = tree_dinosaur_time, file = "tree_dinosaur_time.nex")
+data_dinosaur <-
+  data_dinosaur[rownames(data_dinosaur) %in% tree_dinosaur_time$tip.label, ]
+str(data_dinosaur)
+#> 'data.frame':   402 obs. of  2 variables:
+#>  $ log10_mass: num  3.72 1.6 4.24 4.1 4.55 ...
+#>  $ clade     : Factor w/ 4 levels "Dinosauromorpha",..: 3 3 3 3 3 3 3 3 3 3 ...
+mass <- data_dinosaur[, 1]
+names(mass) <- rownames(data_dinosaur)
+export_data_bt(data = mass, file = "data_dinosaur_log10_body_mass.txt")
+# I used the same variable rates model settings as before,  except that I
+#   decreased the MCMC iterations from 105 million to 55 million. The command
+#   line is as follows:
+#     `bayestraits tree_dinosaur_time.nex data_dinosaur_log10_body_mass.txt <`
+#       `bayestraits_infile_dinosaur.txt`
+tree_dinosaur_morpho <- import_tree_nex(file = "tree_dinosaur_morpho.trees")
+# The MCMC chain seems to have converged as the ESSs for all estimated
+#   parameters are all above 200.
+tree_dinosaur_morpho
+#>
+#> Phylogenetic tree with 402 tips and 401 internal nodes.
+#>
+#> Tip labels:
+#>   Abrictosaurus_consors, Achelousaurus_horneri, Achillobator, Acrocanthosaurus, Adasaurus, Adeopapposaurus, ...
+#>
+#> Rooted; includes branch lengths.
+data_dinosaur <-
+  data_dinosaur[match(tree_dinosaur_morpho$tip.label, rownames(data_dinosaur)), ]
+
+# Save `R` objects to be exported as an .rda file ----
+save(
+  tree_lepidosaur_mol,
+  tree_mammal_morpho,
+  data_mammal,
+  tree_zika_mol,
+  tree_zika_time,
+  tree_dinosaur_time,
+  tree_dinosaur_morpho,
+  data_dinosaur,
+  file = "data.rda"
+)

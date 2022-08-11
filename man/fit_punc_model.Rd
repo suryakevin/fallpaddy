@@ -4,13 +4,18 @@
 \alias{fit_punc_model}
 \title{Detect punctuated evolution}
 \usage{
-fit_punc_model(data, vcv_parts, D, model = c("p", "pn", "pt", "ptn"))
+fit_punc_model(
+  data,
+  vcv_parts,
+  D,
+  model = c("p", "pn", "pt", "ptn", "ptni", "png", "pngi", "ptng", "ptngi")
+)
 }
 \arguments{
 \item{data}{A data frame with path length in the 1st column, node count in
-the 2nd, time in the 3rd (optional), and taxon names as the row names;
-make sure that the row order matches the tree tip labels (use the function
-\code{reorder_data})}
+the 2nd, time in the 3rd (optional), group assignment in the 4th
+(optional), and taxon names as the row names; make sure that the row order
+matches the tree tip labels (use the function \code{reorder_data})}
 
 \item{vcv_parts}{A list outputted from the \code{decomp_vcv} function}
 
@@ -18,10 +23,15 @@ make sure that the row order matches the tree tip labels (use the function
 
 \item{model}{Model options:
 \itemize{
-\item "p": path ~ 1
-\item "pn": path ~ node
-\item "pt": path ~ time
-\item "ptn": path ~ time + node
+\item "p": \code{path ~ 1}
+\item "pn": \code{path ~ node}
+\item "pt": \code{path ~ time}
+\item "ptn": \code{path ~ time + node}
+\item "ptni": \code{path ~ time * node}
+\item "png": \code{path ~ node + group}
+\item "pngi": \code{path ~ node * group}
+\item "ptng": \code{path ~ time + node + group}
+\item "ptngi": \code{path ~ time + node * group}
 }}
 }
 \value{
@@ -38,33 +48,38 @@ The goal is to estimate the expected difference in net evolution,
 morphological or molecular, between two taxa where one of them has
 undergone one additional branching event. A taxon's net divergence is
 proxied by its phylogenetic path length or root-to-tip distance. And the
-cumulative number of branching events along the path is the node count.
+cumulative number of branching events along a taxon's root-to-tip path is
+its node count.
 
-This expected difference should account for the strict clock, morphological
-or molecular. When all taxa in the tree are co-occurring (e.g., all
+This expected difference should account for the strict clock (morphological
+or molecular). When all taxa in the tree are co-occurring (e.g., all
 present-day mammal species), the expected path length under the strict
-clock is the mean (\code{path ~ 1}). Note that the average should be
-phylogenetically-normalized. This mean-only model is the simplest.
+clock is just the mean (\code{path ~ 1}). Note that this mean should be
+phylogenetically-normalized. This mean-only model is the simplest possible
+model.
 
 Punctuated evolution means that more change accumulates during branching
 events. As a result, the evolutionary rate is not clock-like. So, we
-hypothesize that node count predicts deviation from the clock
+hypothesize that deviations from a clock-like rate depend on node count
 (\code{path ~ node}).
 
 However, the strict clock has a different expectation when the taxa in the
-tree are not co-occurring. For example, the taxa are sampled serially like
-SARS-CoV-2 genomes during the COVID-19 pandemic or sporadically like the
-deposition of dinosaur fossils in ancient sediments. In these cases, the
-strict clock expects the amount of divergence to scale proportionally with
-time (\verb{path ~ sampling time}).
+tree are not co-occurring. Examples are when taxa are serially sampled
+like SARS-CoV-2 genomes during the COVID-19 pandemic or sporadically
+preserved as in the deposition of dinosaur fossils in ancient sediments.
+In these cases, the strict clock expects the amount of divergence to scale
+proportionally with time (\verb{path ~ sampling time}).
 
-In such cases, the detection of punctuated evolution becomes the regression
-of path length on sampling time and node count (\code{path ~ time + node}).
+In the cases above, the detection of punctuated evolution turns into
+estimating the node count "effect" accounting for sampling time
+(\code{path ~ time + node}).
 
 We can fit more complex models where we allow the degree of punctuational
 effect to vary with time (e.g., \code{path ~ time + node + time * node}) or
-space (e.g., \code{path ~ time + node * continent}). However, it is best to
-create your custom function or write a custom script at this point.
+across levels of a grouping variable such as continents or lineages. For
+the latter, we can fit a separate-intercepts (e.g.,
+\code{path ~ time + node + continent}) or separate-slopes model (e.g.,
+\code{path ~ time + node + continent + continent * node}).
 }
 \references{
 \href{https://doi.org/10.1126/science.1083202}{Webster et al. (2003)};

@@ -7,9 +7,9 @@
 plot_data_2d(data, group = FALSE, size = 1.5, alpha = 1)
 }
 \arguments{
-\item{data}{A data frame with taxon name in the row name, path length in the
-1st column, node count in the 2nd, and group assignment in the 3rd
-(optional)}
+\item{data}{A data frame path length in the 1st column, node count in the
+2nd, group assignment in the 3rd (optional), and taxon names as the row
+names}
 
 \item{group}{If \code{TRUE}, the colors of the data points represent the group
 assignment}

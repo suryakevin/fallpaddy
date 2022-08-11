@@ -65,6 +65,7 @@ document()
 #> Writing compare_models.Rd
 #> Writing create_dmat.Rd
 #> Writing decomp_vcv.Rd
+#> Writing est_branching_rate.Rd
 #> Writing est_node_density.Rd
 #> Writing print_node_density.Rd
 #> Writing est_punc_contrib.Rd
@@ -79,9 +80,11 @@ document()
 #> Writing print_punc_model.Rd
 #> Writing get_node_count.Rd
 #> Writing get_path_length.Rd
+#> Writing get_sampling_time.Rd
 #> Writing import_data.Rd
 #> Writing import_data_bt.Rd
 #> Writing import_data_csv.Rd
+#> Writing import_data_excel.Rd
 #> Writing import_tree_nex.Rd
 #> Writing import_tree_nwk.Rd
 #> Writing plot_data_2d.Rd
@@ -106,102 +109,77 @@ use_mit_license()
 
 # Write README.md ----
 
+# Render `fallpaddy` as a git repo ----
+use_git()
+#> √ Initialising Git repo
+#> √ Adding '.Rhistory', '.Rdata', '.httr-oauth', '.DS_Store' to '.gitignore'
+#> There are 12 uncommitted files:
+#> * '.gitignore'
+#> * '.Rbuildignore'
+#> * 'DESCRIPTION'
+#> * 'fallpaddy.Rproj'
+#> * 'LICENSE'
+#> * 'LICENSE.md'
+#> * 'log.r'
+#> * 'man/'
+#> * 'NAMESPACE'
+#> * 'R/'
+#> * ...
+#> Is it ok to commit them?
+#>
+#> 1: No
+#> 2: Definitely
+#> 3: Nope
+#>
+#> Selection: 2
+#> √ Adding files
+#> √ Making a commit with message 'Initial commit'
+#> * A restart of RStudio is required to activate the Git pane
+#> Restart now?
+#>
+#> 1: Absolutely not
+#> 2: Negative
+#> 3: Yes
+#>
+#> Selection: 3
+
+# Create a new GitHub repo with the same name as the package ----
+
+# Synchronize the local git repo with the GitHub repo ----
+#> git remote add origin https://github.com/suryakevin/fallpaddy.git
+#> git push -u origin master
+
+# Clean and store external data ----
+load(file = "data.rda")
+library(ape)
+tree_dinosaur_morpho <- as.phylo(x = tree_dinosaur_morpho)
+tree_dinosaur_time <- as.phylo(x = tree_dinosaur_time)
+tree_lepidosaur_mol <- as.phylo(x = tree_lepidosaur_mol)
+tree_mammal_morpho <- as.phylo(x = tree_mammal_morpho)
+tree_zika_mol <- as.phylo(x = tree_zika_mol)
+tree_zika_time <- as.phylo(x = tree_zika_time)
+use_data(
+  tree_lepidosaur_mol,
+  tree_mammal_morpho,
+  data_mammal,
+  tree_zika_mol,
+  tree_zika_time,
+  tree_dinosaur_time,
+  tree_dinosaur_morpho,
+  data_dinosaur
+)
+#> √ Setting active project to 'C:/Users/sadik/Documents/GitHub/fallpaddy'
+#> √ Adding 'R' to Depends field in DESCRIPTION
+#> √ Creating 'data/'
+#> √ Setting LazyData to 'true' in 'DESCRIPTION'
+#> √ Saving 'tree_lepidosaur_mol', 'tree_mammal_morpho', 'data_mammal', 'tree_zika_mol', 'tree_zika_time', 'tree_dinosaur_time', 'tree_dinosaur_morpho', 'data_dinosaur' to 'data/tree_lepidosaur_mol.rda', 'data/tree_mammal_morpho.rda', 'data/data_mammal.rda', 'data/tree_zika_mol.rda', 'data/tree_zika_time.rda', 'data/tree_dinosaur_time.rda', 'data/tree_dinosaur_morpho.rda', 'data/data_dinosaur.rda'
+#> * Document your data (see 'https://r-pkgs.org/data.html')
+
 # [...RESUME...].
 
-# clean and store external data ----
+# Document data ----
 
-# create vignette ----
-
-# render `fallpaddy` as a git repo ----
-use_git()
-
-# create a new GitHub repo with the same name as the package ----
-
-# synchronize the local git repo with the GitHub repo ----
-#> git remote add origin git@github.com:suryakevin/fallpaddy.git
-#> git push -u origin master
+# Create vignette ----
 
 # Check `fallpaddy` ----
 check()
-#> i Updating drugcandy documentation
-#> i Loading drugcandy
-#> Writing NAMESPACE
-#> Writing NAMESPACE
-#> -- Building ------------------------------------------------------------------- drugcandy --
-#> Setting env vars:
-#> * CFLAGS    : -Wall -pedantic -fdiagnostics-color=always
-#> * CXXFLAGS  : -Wall -pedantic -fdiagnostics-color=always
-#> * CXX11FLAGS: -Wall -pedantic -fdiagnostics-color=always
-#> * CXX14FLAGS: -Wall -pedantic -fdiagnostics-color=always
-#> * CXX17FLAGS: -Wall -pedantic -fdiagnostics-color=always
-#> * CXX20FLAGS: -Wall -pedantic -fdiagnostics-color=always
-#> --------------------------------------------------------------------------------------------
-#> √  checking for file 'C:\Users\sadik\Documents\GitHub\drugcandy/DESCRIPTION' ...
-#> -  preparing 'drugcandy': (1.1s)
-#> √  checking DESCRIPTION meta-information ...
-#> -  checking for LF line-endings in source and make files and shell scripts
-#> -  checking for empty or unneeded directories
-#> -  building 'drugcandy_1.0.0.tar.gz'
-#>
-#> -- Checking ------------------------------------------------------------------- drugcandy --
-#> Setting env vars:
-#> * _R_CHECK_CRAN_INCOMING_REMOTE_: FALSE
-#> * _R_CHECK_CRAN_INCOMING_       : FALSE
-#> * _R_CHECK_FORCE_SUGGESTS_      : FALSE
-#> * NOT_CRAN                      : true
-#> -- R CMD check -----------------------------------------------------------------------------
-#> -  using log directory 'C:/Users/sadik/AppData/Local/Temp/RtmpGEEgw5/drugcandy.Rcheck'
-#> -  using R version 4.1.2 (2021-11-01)
-#> -  using platform: x86_64-w64-mingw32 (64-bit)
-#> -  using session charset: ISO8859-1
-#> -  using options '--no-manual --as-cran'
-#> √  checking for file 'drugcandy/DESCRIPTION' ...
-#> -  this is package 'drugcandy' version '1.0.0'
-#> -  package encoding: UTF-8
-#> √  checking package namespace information ...
-#> √  checking package dependencies (2.2s)
-#> √  checking if this is a source package
-#> √  checking if there is a namespace
-#> √  checking for executable files (585ms)
-#> √  checking for hidden files and directories ...
-#> √  checking for portable file names ...
-#> √  checking serialization versions
-#> √  checking whether package 'drugcandy' can be installed (8.6s)
-#> √  checking installed package size ...
-#> √  checking package directory
-#> √  checking for future file timestamps ...
-#> √  checking DESCRIPTION meta-information (363ms)
-#> √  checking top-level files
-#> √  checking for left-over files ...
-#> √  checking index information
-#> √  checking package subdirectories ...
-#> √  checking R files for non-ASCII characters ...
-#> √  checking R files for syntax errors ...
-#> √  checking whether the package can be loaded (2.1s)
-#> √  checking whether the package can be loaded with stated dependencies (2.1s)
-#> √  checking whether the package can be unloaded cleanly (2.2s)
-#> √  checking whether the namespace can be loaded with stated dependencies (2.1s)
-#> √  checking whether the namespace can be unloaded cleanly (2.2s)
-#> √  checking dependencies in R code (2.1s)
-#> √  checking S3 generic/method consistency (3.1s)
-#> √  checking replacement functions (2.1s)
-#> √  checking foreign function calls (2.1s)
-#> √  checking R code for possible problems (10.3s)
-#> √  checking Rd files ...
-#> √  checking Rd metadata ...
-#> √  checking Rd line widths ...
-#> √  checking Rd cross-references ...
-#> √  checking for missing documentation entries (2s)
-#> √  checking for code/documentation mismatches (6.1s)
-#> √  checking Rd \usage sections (3.4s)
-#> √  checking Rd contents ...
-#> √  checking for unstated dependencies in examples ...
-#> -  checking examples ... NONE
-#> √  checking for non-standard things in the check directory
-#> √  checking for detritus in the temp directory
-#>
-#>
-#> -- R CMD check results ------------------------------------------------ drugcandy 1.0.0 ----
-#> Duration: 1m 0.2s
-#>
-#> 0 errors √ | 0 warnings √ | 0 notes √
