@@ -4,7 +4,7 @@
 #'   Criterion (\eqn{BIC}). The model with the lowest \eqn{BIC} has the highest
 #'   maximum likelihood (or roughly the fit of the model to the data),
 #'   accounting for model complexity. A \eqn{BIC} difference between two models
-#'   (\eqn{\DeltaBIC}) is equal to the Bayes Factor. A \eqn{\DeltaBIC > 2}
+#'   (\eqn{\Delta BIC}) is equal to the Bayes Factor. A \eqn{\Delta BIC > 2}
 #'   represents at least a 100 times difference in the likelihoods.
 #'
 #' @param models A list of models to compare (e.g.,

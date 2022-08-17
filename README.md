@@ -55,5 +55,5 @@ P.S. The package name comes from the first poem of the Ogura Hyakunin Isshu
 (lit. "One Hundred Poets, One Poem [Each]"). All thanks go to *Chihayafuru* for
 educating me on the beauty of Japanese poetry!
 
-> The fall paddy shacks have rough thatching
+> The fall paddy shacks have rough thatching  
 > as my sleeves are wet with dew.

@@ -175,9 +175,9 @@ use_data(
 #> √ Saving 'tree_lepidosaur_mol', 'tree_mammal_morpho', 'data_mammal', 'tree_zika_mol', 'tree_zika_time', 'tree_dinosaur_time', 'tree_dinosaur_morpho', 'data_dinosaur' to 'data/tree_lepidosaur_mol.rda', 'data/tree_mammal_morpho.rda', 'data/data_mammal.rda', 'data/tree_zika_mol.rda', 'data/tree_zika_time.rda', 'data/tree_dinosaur_time.rda', 'data/tree_dinosaur_morpho.rda', 'data/data_dinosaur.rda'
 #> * Document your data (see 'https://r-pkgs.org/data.html')
 
-# [...RESUME...].
-
 # Document data ----
+
+# [...RESUME...].
 
 # Create vignette ----
 
