@@ -176,6 +176,15 @@ use_data(
 #> * Document your data (see 'https://r-pkgs.org/data.html')
 
 # Document data ----
+document()
+#> Writing data_dinosaur.Rd
+#> Writing data_mammal.Rd
+#> Writing tree_dinosaur_morpho.Rd
+#> Writing tree_dinosaur_time.Rd
+#> Writing tree_lepidosaur_mol.Rd
+#> Writing tree_mammal_morpho.Rd
+#> Writing tree_zika_mol.Rd
+#> Writing tree_zika_time.Rd
 
 # [...RESUME...].
 
