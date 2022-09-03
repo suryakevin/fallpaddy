@@ -1,0 +1,40 @@
+---
+title: "Detecting and Simulating Punctuated Evolution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Detecting and Simulating Punctuated Evolution}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r global_options, include = FALSE}
+# Set global options ----
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+options(mc.cores = parallel::detectCores())
+```
+
+## Why should we care about punctuated evolution?
+
+
+
+## Why `fallpaddy`?
+
+```{r setup}
+# Load package ----
+library(fallpaddy)
+```
+
+## Molecular evolution in extant snakes and lizards
+
+## Body size evolution in extant mammals
+
+## Genomic evolution in Zika viruses
+
+## Body size evolution in Mesozoic dinosaurs
+
+## References

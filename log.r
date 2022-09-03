@@ -186,9 +186,21 @@ document()
 #> Writing tree_zika_mol.Rd
 #> Writing tree_zika_time.Rd
 
-# [...RESUME...].
-
 # Create vignette ----
+use_vignette(name = "fallpaddy")
+#> ✓ Setting active project to 'C:/Users/sadik/Documents/GitHub/fallpaddy'
+#> ✓ Adding 'knitr' to Suggests field in DESCRIPTION
+#> ✓ Setting VignetteBuilder field in DESCRIPTION to 'knitr'
+#> ✓ Adding 'inst/doc' to '.gitignore'
+#> ✓ Creating 'vignettes/'
+#> ✓ Adding '*.html', '*.R' to 'vignettes/.gitignore'
+#> ✓ Adding 'rmarkdown' to Suggests field in DESCRIPTION
+#> ✓ Writing 'vignettes/fallpaddy.Rmd'
+#> • Modify 'vignettes/fallpaddy.Rmd'
+
+# [...RESUME...]
+
+build_rmd()
 
 # Check `fallpaddy` ----
 check()
