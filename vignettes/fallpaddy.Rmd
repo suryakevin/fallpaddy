@@ -14,7 +14,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   message = FALSE,
-  warning = FALSE
+  warning = FALSE,
+  dev = "svg",
+  fig.height = 2.94,
+  fig.width = 4.75
 )
 options(mc.cores = parallel::detectCores())
 ```
@@ -52,11 +55,11 @@ library(fallpaddy)
 
 ## 1. Molecular evolution in extant snakes and lizards
 
-Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp). Below is the generic plot of the tree:
+Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). Below is a simple plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using `Adobe Illustrator` to maximize the data-ink ratio of the figure^9^. But, for tree visualization, the current plot is sufficient.
 
 ```{r 1_plot_tree}
 # Plot tree ----
-plot_tree(tree = tree_lepidosaur_mol)
+plot_tree(tree = tree_lepidosaur_mol, unit = "subs/site")
 ```
 
 ## 2. Body size evolution in extant mammals
@@ -82,3 +85,5 @@ plot_tree(tree = tree_lepidosaur_mol)
 7. Pagel, M., O'Donovan, C. & Meade, A. General statistical model shows that macroevolutionary patterns and processes are consistent with Darwinian gradualism. *Nat. Commun.* __13__, 1113 (2022).
 
 8. Pyron, R. A., Burbrink, F. T. & Wiens, J. J. A phylogeny and revised classification of Squamata, including 4161 species of lizards and snakes. *BMC Evol. Biol.* __13__, 93 (2013).
+
+9. Tufte, E. R. *The Visual Display of Quantitative Information*. (Graphics Press, 1983).
