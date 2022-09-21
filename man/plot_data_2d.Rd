@@ -4,7 +4,7 @@
 \alias{plot_data_2d}
 \title{Create a 2D interactive plot}
 \usage{
-plot_data_2d(data, group = FALSE, size = 1.5, alpha = 1)
+plot_data_2d(data, group = FALSE, size = 1.5, alpha = 1, unit)
 }
 \arguments{
 \item{data}{A data frame path length in the 1st column, node count in the
@@ -17,6 +17,8 @@ assignment}
 \item{size}{Size of data point}
 
 \item{alpha}{Transparency of data point (0: transparent; 1: opaque)}
+
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
 }
 \value{
 This function returns an object of the class \code{plotly}.

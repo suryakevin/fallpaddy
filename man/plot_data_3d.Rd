@@ -4,7 +4,7 @@
 \alias{plot_data_3d}
 \title{Create a 3D interactive plot}
 \usage{
-plot_data_3d(data, group = FALSE, size = 1.25)
+plot_data_3d(data, group = FALSE, size = 1.25, unit)
 }
 \arguments{
 \item{data}{A data frame with path length in the 1st column, node count in
@@ -15,6 +15,8 @@ taxon names as the row names}
 assignment instead of the node count}
 
 \item{size}{Size of data point}
+
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
 }
 \value{
 This function returns an object of the class \code{plotly} class.

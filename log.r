@@ -197,9 +197,6 @@ use_vignette(name = "fallpaddy")
 #> ✓ Adding 'rmarkdown' to Suggests field in DESCRIPTION
 #> ✓ Writing 'vignettes/fallpaddy.Rmd'
 #> • Modify 'vignettes/fallpaddy.Rmd'
-
-# [...RESUME...]
-
 build_rmd()
 
 # Check `fallpaddy` ----

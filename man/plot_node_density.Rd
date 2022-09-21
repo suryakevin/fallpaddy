@@ -4,13 +4,15 @@
 \alias{plot_node_density}
 \title{Plot the node-density test}
 \usage{
-plot_node_density(data, output_nd)
+plot_node_density(data, output_nd, unit)
 }
 \arguments{
 \item{data}{A data frame with path length in the 1st column and node count
 in the 2nd}
 
 \item{output_nd}{A list outputted from the \code{est_node_density} function}
+
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
 }
 \value{
 This function returns an object of the \code{ggplot} class.

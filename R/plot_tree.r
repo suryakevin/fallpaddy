@@ -4,6 +4,7 @@
 #'
 #' @param tree An object of class `phylo`
 #' @param size Branch thickness
+#' @param unit Branch length unit (e.g., subs/site and mya)
 #'
 #' @return This function returns an object of the `ggtree` class.
 #'
@@ -15,11 +16,11 @@
 #'
 #' @export
 #'
-plot_tree <- function(tree, size = 0.3) {
+plot_tree <- function(tree, size = 0.3, unit) {
   plot <-
     ggtree(tr = tree, size = size) +
       theme_tree2() +
-      labs(caption = "subs/site")
+      labs(caption = unit)
   return(plot)
 }
 
@@ -32,6 +33,7 @@ plot_tree <- function(tree, size = 0.3) {
 #' @param data A data frame with taxon name in the row name and the group
 #'   assignment in the 1st column
 #' @param size Branch thickness
+#' @param unit Branch length unit (e.g., subs/site and mya)
 #'
 #' @return This function returns an object of the `ggtree` class.
 #'
@@ -45,7 +47,7 @@ plot_tree <- function(tree, size = 0.3) {
 #'
 #' @export
 #'
-plot_tree_color <- function(tree, data, size = 0.3) {
+plot_tree_color <- function(tree, data, size = 0.3, unit) {
   # prepares data
   data <- cbind(rownames(data), data)
   colnames(data)[1] <- "taxon"
@@ -67,6 +69,6 @@ plot_tree_color <- function(tree, data, size = 0.3) {
   plot <-
     ggtree(tr = tr_object, aes(color = .data$group), size = size) +
       theme_tree2(legend = "right", legend.title = element_blank()) +
-      labs(caption = "subs/site")
+      labs(caption = unit)
   return(plot)
 }

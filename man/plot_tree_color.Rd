@@ -4,7 +4,7 @@
 \alias{plot_tree_color}
 \title{Plot phylogenetic tree with colored branches}
 \usage{
-plot_tree_color(tree, data, size = 0.3)
+plot_tree_color(tree, data, size = 0.3, unit)
 }
 \arguments{
 \item{tree}{An object of class \code{phylo}}
@@ -13,6 +13,8 @@ plot_tree_color(tree, data, size = 0.3)
 assignment in the 1st column}
 
 \item{size}{Branch thickness}
+
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
 }
 \value{
 This function returns an object of the \code{ggtree} class.

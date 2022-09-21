@@ -9,6 +9,7 @@
 #'   assignment
 #' @param size Size of data point
 #' @param alpha Transparency of data point (0: transparent; 1: opaque)
+#' @param unit Branch length unit (e.g., subs/site and mya)
 #'
 #' @return This function returns an object of the class `plotly`.
 #'
@@ -19,7 +20,7 @@
 #'
 #' @export
 #'
-plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
+plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1, unit) {
   colnames(data) <- c("path", "node", "group")
   data$taxon <- rownames(data)
   if (group == FALSE) {
@@ -42,7 +43,7 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
         tickfont = list(size = 14)
       ),
       yaxis = list(
-        title = "Phylogenetic path length (subs/site)",
+        title = paste0("Phylogenetic path length (", unit, ")"),
         titlefont = list(size = 20),
         tickfont = list(size = 14)
       )
@@ -69,7 +70,7 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
         tickfont = list(size = 14)
       ),
       yaxis = list(
-        title = "Phylogenetic path length (subs/site)",
+        title = paste0("Phylogenetic path length (", unit, ")"),
         titlefont = list(size = 20),
         tickfont = list(size = 14)
       ),
@@ -93,6 +94,7 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
 #' @param group If `TRUE`, the colors of the data points represent the group
 #'   assignment instead of the node count
 #' @param size Size of data point
+#' @param unit Branch length unit (e.g., subs/site and mya)
 #'
 #' @return This function returns an object of the class `plotly` class.
 #'
@@ -103,7 +105,7 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1) {
 #'
 #' @export
 #'
-plot_data_3d <- function(data, group = FALSE, size = 1.25) {
+plot_data_3d <- function(data, group = FALSE, size = 1.25, unit) {
   if (group == FALSE) {
     colnames(data) <- c("path", "node", "time")
     data$taxon <- rownames(data)
@@ -136,7 +138,7 @@ plot_data_3d <- function(data, group = FALSE, size = 1.25) {
       scene = list(
         xaxis = list(title = "Time"),
         yaxis = list(title = "Node count"),
-        zaxis = list(title = "Phylogenetic path length (subs/site)")
+        zaxis = list(title = paste0("Phylogenetic path length (", unit, ")"))
       )
     )
   return(plot)

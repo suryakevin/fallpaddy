@@ -1,5 +1,6 @@
 ---
 title: "Detecting and Simulating Punctuated Evolution"
+author: "Kevin Surya"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Detecting and Simulating Punctuated Evolution}
@@ -18,23 +19,66 @@ knitr::opts_chunk$set(
 options(mc.cores = parallel::detectCores())
 ```
 
+```{css superscripts, echo = FALSE}
+/* Prevent superscripts from increasing line heights */
+/* codes adapted from https://stackoverflow.com/questions/1530685/html-sup-tag-affecting-line-height-how-to-make-it-consistent and https://bookdown.org/yihui/rmarkdown-cookbook/html-css.html*/
+sup {
+  line-height: 0;
+  font-size: 0.6em;
+  vertical-align: super;
+}
+```
+
 ## Why should we care about punctuated evolution?
 
+Explaining the diversity of life today and in the past is the grail of evolutionary biology. Darwin^1^ predicted that variation emerges gradually, where evolutionary change accumulates at a steady rate over long timespans. However, the fossil record suggests that new traits often appear abruptly, coincident with events where a subpopulation splits off from the main population^2,3^. We call these events speciations. The increased evolutionary rate during speciation could be due to drift related to small population size^2^ or adaptive as a subpopulation enters a new environment^3^. Eldredge and Gould^3^ noticed this pattern and posited that a lineage's history comprises long periods of stasis punctuated by rapid evolution around speciation events.
 
+But, the idea that ~100% of divergence happens during speciation is extreme. Rather than debating this view of evolution (gradual vs. punctuated), we can estimate how much the variability of a trait in a group is attributable to speciation events (0% to 100%). Mark Pagel and colleagues at the University of Reading devised such methods (which we will review below) to infer that net speciation explains ~16% of the total molecular evolution in extant plants, fungi, and animals^4,5^. The method applies to any evolving system, including human languages^6^. Up to 33% of vocabulary differences are attributable to language-splitting events^6^. Punctuated evolution is, therefore, a widespread pattern in how genomes, phenotypes, and cultures evolve. And we need to quantify this pattern.
+
+Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution.
 
 ## Why `fallpaddy`?
+
+There are a few reasons for developing the `fallpaddy` package. My colleagues and I are generalizing Pagel et al.'s^5^ method to cover serially sampled taxa, such as extinct dinosaurs and viruses (Surya et al., in review). I want this modified model to be easily accessible to evolutionary biologists, including myself. No one wants to continuously write and edit long `R` or `python` scripts if they can streamline the process using functions. Second, this package has a function for simulating punctuated evolution in a manner that is more flexible than in other packages. This function allows the user to specify the punctuational contribution to the total trait divergence (0 to 1) instead of fixing it to one. Lastly, this package is a one-stop shop for studying punctuated evolution. It contains tools for data extraction, wrangling, visualization, and diagnostics.
+
+This package, however, uses maximum likelihood, not Bayesian. `fallpaddy` is, therefore, most useful for quick-and-dirty exploratory analyses or if the dataset size precludes the computationally heavy Bayesian workhorse, Markov chain Monte Carlo (MCMC). My colleagues and I will not be developing Bayesian functions here in this package. But, expect them to be available in the future.
+
+This vignette document showcases how to use `fallpaddy` primary functions in four case studies, covering molecular and phenotypic traits and distant taxonomic groups, from dinosaurs to viruses. So, let's begin by loading the package. I already bundled the datasets with the package.
 
 ```{r setup}
 # Load package ----
 library(fallpaddy)
 ```
 
-## Molecular evolution in extant snakes and lizards
+## 1. Molecular evolution in extant snakes and lizards
 
-## Body size evolution in extant mammals
+Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp). Below is the generic plot of the tree:
 
-## Genomic evolution in Zika viruses
+```{r 1_plot_tree}
+# Plot tree ----
+plot_tree(tree = tree_lepidosaur_mol)
+```
 
-## Body size evolution in Mesozoic dinosaurs
+## 2. Body size evolution in extant mammals
+
+## 3. Genomic evolution in Zika viruses
+
+## 4. Body size evolution in Mesozoic dinosaurs
 
 ## References
+
+1. Darwin, C. *On the Origin of Species by Means of Natural Selection, or the Preservation of Favoured Races in the Struggle for Life*. (John Murray, 1859).
+
+2. Mayr, E. Change of genetic environment and evolution. in *Evolution as a Process* (eds. Huxley, J., Hardy, A. C. & Ford, E. B.) 157–180 (Allan & Unwin, 1954).
+
+3. Eldredge, N. & Gould, S. J. Punctuated equilibria: An alternative to phyletic gradualism. in *Models in Paleobiology* (ed. Schopf, T. J. M.) 82–115 (Freeman, Cooper, 1972).
+
+4. Webster, A. J., Payne, R. J. H. & Pagel, M. Molecular phylogenies link rates of evolution and speciation. *Science* __301__, 478–478 (2003).
+
+5. Pagel, M., Venditti, C. & Meade, A. Large punctuational contribution of speciation to evolutionary divergence at the molecular level. *Science* __314__, 119–121 (2006).
+
+6. Atkinson, Q. D., Meade, A., Venditti, C., Greenhill, S. J. & Pagel, M. Languages evolve in punctuational bursts. *Science* __319__, 588–588 (2008).
+
+7. Pagel, M., O'Donovan, C. & Meade, A. General statistical model shows that macroevolutionary patterns and processes are consistent with Darwinian gradualism. *Nat. Commun.* __13__, 1113 (2022).
+
+8. Pyron, R. A., Burbrink, F. T. & Wiens, J. J. A phylogeny and revised classification of Squamata, including 4161 species of lizards and snakes. *BMC Evol. Biol.* __13__, 93 (2013).
