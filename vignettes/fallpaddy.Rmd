@@ -49,18 +49,51 @@ This package, however, uses maximum likelihood, not Bayesian. `fallpaddy` is, th
 This vignette document showcases how to use `fallpaddy` primary functions in four case studies, covering molecular and phenotypic traits and distant taxonomic groups, from dinosaurs to viruses. So, let's begin by loading the package. I already bundled the datasets with the package.
 
 ```{r setup}
-# Load package ----
+# Load packages ----
 library(fallpaddy)
 ```
 
 ## 1. Molecular evolution in extant snakes and lizards
 
-Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). Below is a simple plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using `Adobe Illustrator` to maximize the data-ink ratio of the figure^9^. But, for tree visualization, the current plot is sufficient.
+Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). Below is a simple plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using `Adobe Illustrator` to maximize the data-ink ratio of the figure^9^. But, for a quick tree visualization, the current plot is sufficient.
 
 ```{r 1_plot_tree}
 # Plot tree ----
 plot_tree(tree = tree_lepidosaur_mol, unit = "subs/site")
 ```
+
+The first task is to estimate the predicted difference in net molecular evolution between two lepidosaur species where one of them has undergone one additional net-speciation event^5^. A species' net-molecular divergence is proxied by its phylogenetic path length or root-to-tip distance. A net-speciation event is the cumulative number of branching events (i.e., node count) along a species's root-to-tip path. Net speciation is speciation minus extinction. So, we need to extract the path length and node count from the tree above.
+
+```{r 1_extract_data}
+# Extract path length and node count ----
+path1 <- get_path_length(tree = tree_lepidosaur_mol)
+node1 <- get_node_count(tree = tree_lepidosaur_mol)
+
+# Prepare the data frame ----
+data1 <- data.frame(path = path1, node = node1)
+# Reorder rows in the data frame to follow the order of tree tip labels
+data1 <- reorder_data(data = data1, tree = tree_lepidosaur_mol)
+head(data1)
+```
+
+It's always good to plot data
+
+```{r 1_plot_data}
+plot_data_2d(data = data1, unit = "subs/site")
+```
+
+The two following steps are necessary, but you need not fully understand them to run downstream analyses.
+
+```{r 1_prepare_matrices}
+# Decompose the phylogenetic variance-covariance matrix into its correlation
+#   (off-diagonal) and variance components (on-diagonal) ----
+vcv1 <- decomp_vcv(tree = tree_lepidosaur_mol, lambda = 1)
+
+# Create the normalizing matrix D ----
+dmat1 <- create_dmat(tree = tree_lepidosaur_mol)
+```
+
+For detailed explanations, read Symonds and Blomberg^10^.
 
 ## 2. Body size evolution in extant mammals
 
@@ -87,3 +120,5 @@ plot_tree(tree = tree_lepidosaur_mol, unit = "subs/site")
 8. Pyron, R. A., Burbrink, F. T. & Wiens, J. J. A phylogeny and revised classification of Squamata, including 4161 species of lizards and snakes. *BMC Evol. Biol.* __13__, 93 (2013).
 
 9. Tufte, E. R. *The Visual Display of Quantitative Information*. (Graphics Press, 1983).
+
+10. Symonds, M. R. E. & Blomberg, S. P. A primer on phylogenetic generalised least squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 105–130 (Springer Berlin Heidelberg, 2014).

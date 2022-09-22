@@ -21,9 +21,9 @@
 #' @export
 #'
 plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1, unit) {
-  colnames(data) <- c("path", "node", "group")
-  data$taxon <- rownames(data)
   if (group == FALSE) {
+    colnames(data) <- c("path", "node")
+    data$taxon <- rownames(data)
     plot <- plot_ly(
       data = data,
       x = ~node,
@@ -49,6 +49,8 @@ plot_data_2d <- function(data, group = FALSE, size = 1.5, alpha = 1, unit) {
       )
     )
   } else {
+    colnames(data) <- c("path", "node", "group")
+    data$taxon <- rownames(data)
     data$group <- as.factor(data$group)
     plot <- plot_ly(
       data = data,
