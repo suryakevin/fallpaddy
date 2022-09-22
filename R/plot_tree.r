@@ -3,8 +3,8 @@
 #' @description This function plots a phylogenetic tree.
 #'
 #' @param tree An object of class `phylo`
-#' @param size Branch thickness
 #' @param unit Branch length unit (e.g., subs/site and mya)
+#' @param size Branch thickness
 #'
 #' @return This function returns an object of the `ggtree` class.
 #'
@@ -16,7 +16,7 @@
 #'
 #' @export
 #'
-plot_tree <- function(tree, size = 0.3, unit) {
+plot_tree <- function(tree, unit, size = 0.3) {
   plot <-
     ggtree(tr = tree, size = size) +
       theme_tree2() +
@@ -32,8 +32,8 @@ plot_tree <- function(tree, size = 0.3, unit) {
 #' @param tree An object of class `phylo`
 #' @param data A data frame with taxon name in the row name and the group
 #'   assignment in the 1st column
-#' @param size Branch thickness
 #' @param unit Branch length unit (e.g., subs/site and mya)
+#' @param size Branch thickness
 #'
 #' @return This function returns an object of the `ggtree` class.
 #'
@@ -47,7 +47,7 @@ plot_tree <- function(tree, size = 0.3, unit) {
 #'
 #' @export
 #'
-plot_tree_color <- function(tree, data, size = 0.3, unit) {
+plot_tree_color <- function(tree, data, unit, size = 0.3) {
   # prepares data
   data <- cbind(rownames(data), data)
   colnames(data)[1] <- "taxon"

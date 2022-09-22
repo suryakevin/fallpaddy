@@ -4,19 +4,30 @@
 \alias{plot_data_3d}
 \title{Create a 3D interactive plot}
 \usage{
-plot_data_3d(data, group = FALSE, size = 1.25, unit)
+plot_data_3d(
+  data,
+  unit,
+  group = FALSE,
+  pt_size = 1.25,
+  plot_width = 912,
+  plot_height = 564.48
+)
 }
 \arguments{
 \item{data}{A data frame with path length in the 1st column, node count in
 the 2nd, time in the 3rd, group assignment in the 4th (optional), and
 taxon names as the row names}
 
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
+
 \item{group}{If \code{TRUE}, the colors of the data points represent the group
 assignment instead of the node count}
 
-\item{size}{Size of data point}
+\item{pt_size}{Size of data point}
 
-\item{unit}{Branch length unit (e.g., subs/site and mya)}
+\item{plot_width}{Width of the plot in pixels}
+
+\item{plot_height}{Height of the plot in pixels}
 }
 \value{
 This function returns an object of the class \code{plotly} class.

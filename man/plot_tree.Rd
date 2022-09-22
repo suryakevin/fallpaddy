@@ -4,14 +4,14 @@
 \alias{plot_tree}
 \title{Plot phylogenetic tree}
 \usage{
-plot_tree(tree, size = 0.3, unit)
+plot_tree(tree, unit, size = 0.3)
 }
 \arguments{
 \item{tree}{An object of class \code{phylo}}
 
-\item{size}{Branch thickness}
-
 \item{unit}{Branch length unit (e.g., subs/site and mya)}
+
+\item{size}{Branch thickness}
 }
 \value{
 This function returns an object of the \code{ggtree} class.

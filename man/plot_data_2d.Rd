@@ -4,21 +4,39 @@
 \alias{plot_data_2d}
 \title{Create a 2D interactive plot}
 \usage{
-plot_data_2d(data, group = FALSE, size = 1.5, alpha = 1, unit)
+plot_data_2d(
+  data,
+  unit,
+  group = FALSE,
+  pt_size = 1.5,
+  alpha = 1,
+  plot_width = 912,
+  plot_height = 564.48,
+  text_size = 20,
+  tick_size = 14
+)
 }
 \arguments{
 \item{data}{A data frame path length in the 1st column, node count in the
 2nd, group assignment in the 3rd (optional), and taxon names as the row
 names}
 
+\item{unit}{Branch length unit (e.g., subs/site and mya)}
+
 \item{group}{If \code{TRUE}, the colors of the data points represent the group
 assignment}
 
-\item{size}{Size of data point}
+\item{pt_size}{Size of data point}
 
 \item{alpha}{Transparency of data point (0: transparent; 1: opaque)}
 
-\item{unit}{Branch length unit (e.g., subs/site and mya)}
+\item{plot_width}{Width of the plot in pixels}
+
+\item{plot_height}{Height of the plot in pixels}
+
+\item{text_size}{Size of axis/color label}
+
+\item{tick_size}{Size of axis ticks}
 }
 \value{
 This function returns an object of the class \code{plotly}.
