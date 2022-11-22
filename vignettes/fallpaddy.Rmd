@@ -44,9 +44,9 @@ img {
 
 ## Why should we care about punctuated evolution?
 
-Explaining the diversity of life today and in the past is the grail of evolutionary biology. Darwin^1^ predicted that variation emerges gradually, where evolutionary change accumulates at a steady rate over long timespans. However, the fossil record suggests that new traits often appear abruptly, coincident with events where a subpopulation splits off from the main population^2,3^. We call these events speciations. The increased evolutionary rate during speciation could be due to drift related to small population size^2^ or adaptive as a subpopulation enters a new environment^3^. Eldredge and Gould^3^ noticed this pattern and posited that a lineage's history comprises long periods of stasis punctuated by rapid evolution around speciation events.
+Explaining the diversity of life today and in the past is the grail of evolutionary biology. Darwin^1^ predicted that variation emerges gradually, where evolutionary change accumulates incrementally over long timespans. However, the fossil record suggests that new traits often appear abruptly, coincident with events where a subpopulation splits from the main population^2,3^. We call these events speciations. The increased evolutionary rate during speciation could be due to drift related to small population size^2^ or adaptive as a subpopulation enters a new environment^3^. Eldredge and Gould^3^ noticed this pattern and hypothesized that a lineage's history comprises long periods of stasis punctuated by rapid evolution around speciation events.
 
-But, the idea that ~100% of divergence happens during speciation is extreme. Rather than debating this view of evolution (gradual vs. punctuated), we can estimate how much the variability of a trait in a group is attributable to speciation events (0% to 100%). Mark Pagel and colleagues at the University of Reading devised such methods (which we will review below) to infer that net speciation explains ~16% of the total molecular evolution in extant plants, fungi, and animals^4,5^. The method applies to any evolving system, including human languages^6^. Up to 33% of vocabulary differences are attributable to language-splitting events^6^. Punctuated evolution is, therefore, a widespread pattern in how genomes, phenotypes, and cultures evolve. And we need to quantify this pattern.
+But, the idea that ~100% of divergence happens during speciation is extreme. Rather than debating gradual versus punctuated scenarios, we can estimate how much the variability of a trait in a group is attributable to speciation events (0%–100%). Mark Pagel and colleagues at the University of Reading devised such methods (which we will review below) to infer that net speciation explains ~16% of the total molecular evolution in extant plants, fungi, and animals^4,5^. The method applies to any evolving system, including human languages^6^. Up to 33% of vocabulary differences are attributable to language-splitting events^6^. Punctuated evolution is, therefore, a widespread pattern in how genomes, phenotypes, and cultures evolve. We need to quantify this pattern.
 
 Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution.
 
@@ -54,9 +54,9 @@ Punctuated evolution alone does not explain the diversity of life, and it is not
 
 There are a few reasons for developing the `fallpaddy` package. My colleagues and I are generalizing Pagel et al.'s^5^ method to cover serially sampled taxa, such as extinct dinosaurs and viruses, including SARS-CoV-2 (Surya et al., in review). I want this modified model to be easily accessible to evolutionary biologists, including myself. No one wants to keep writing long `R` or `Python` scripts if they can streamline the process with functions. Second, this package has a function for simulating punctuated evolution in a manner more flexible than in other packages. This function allows the user to specify the punctuational contribution to the total trait divergence (0 to 1) instead of fixing it to one. Lastly, this package is a one-stop shop for studying punctuated evolution. It contains tools for data extraction, wrangling, visualization, and diagnostics.
 
-This package, however, uses maximum likelihood, not Bayesian. `fallpaddy` is most useful for quick-and-dirty exploratory analyses or if the dataset size precludes the computationally heavy Bayesian workhorse, Markov chain Monte Carlo (MCMC). My colleagues and I will not be developing Bayesian functions in this package. Expect them to be available in the `Python` library `Sci-Phy` [(link)](https://chrisorgan.github.io/code/) in the future.
+This package, however, uses maximum likelihood, not Bayesian. `fallpaddy` is most useful for quick exploratory analyses or if the dataset size precludes the computationally heavy Bayesian workhorse, Markov chain Monte Carlo (MCMC). My colleagues and I will not be developing Bayesian functions in this package. Expect their availability in the `Python` library `Sci-Phy` [(link)](https://chrisorgan.github.io/code/) in the future.
 
-This vignette document showcases how to use `fallpaddy` primary functions in four case studies, covering molecular and phenotypic traits and distant taxonomic groups, from dinosaurs to viruses. So, let's begin by loading the package. I already bundled the datasets with the package.
+This vignette document showcases how to use `fallpaddy` main functions in four case studies, covering molecular and phenotypic traits and distant taxonomic groups, from dinosaurs to viruses. So, let's begin by loading the package. I already bundled the datasets with the package.
 
 ```{r load_package}
 # Load package ----
@@ -65,14 +65,17 @@ library(fallpaddy)
 
 ## 1. Molecular evolution in snakes and lizards
 
-Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). It is rooted and fully bifurcating. Below is a plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using `Adobe Illustrator` to maximize the data-ink ratio^9^. But, for a quick tree visualization, this plot is sufficient.
+Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). It is rooted and fully bifurcating. Below is a plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using Adobe Illustrator to maximize the data-ink ratio^9^. But, for a quick tree visualization, this plot is sufficient.
 
-```{r 1_plot_tree, fig.cap="Fig. 1: Molecular phylogenetic tree of 4,162 lepidosaur species from Pyron et al.^8^."}
+```{r 1_plot_tree, fig.cap = "Fig. 1: Molecular phylogenetic tree of 4,162 lepidosaur species from Pyron et al.^8^."}
 # Plot tree ----
-plot_tree(tree = tree_lepidosaur_mol, unit = "subs/site")
+plot_tree(
+  tree = tree_lepidosaur_mol,
+  unit = "expected number of substitutions per site"
+)
 ```
 
-This tree contains the information we need to detect punctuated evolution. The first task is to estimate the predicted difference in net molecular evolution between two lepidosaur species where one of them has undergone one additional net-speciation event^5^. A species' net-molecular divergence is proxied by its phylogenetic path length or root-to-tip distance. A net-speciation event is the cumulative number of branching events (i.e., node count) along a species' root-to-tip path. Net speciation is speciation minus extinction. So, we need to extract the path length and node count from the tree.
+This tree contains the information we need to detect punctuated evolution. The first task is to estimate the predicted difference in net molecular evolution between two lepidosaur species where one of them has undergone one additional net-speciation event^5^. A species' net-molecular divergence is proxied by its phylogenetic path length or root-to-tip distance. A net-speciation event is the cumulative number of branching events (i.e., node count) along a species' root-to-tip path. Net speciation is speciation minus extinction. So, we need to extract the path length and node count from the tree. See Pagel et al.'s^5^ Figure 1 for a simple schematic.
 
 ```{r 1_extract_data}
 # Extract path length and node count ----
@@ -80,19 +83,21 @@ path1 <- get_path_length(tree = tree_lepidosaur_mol)
 node1 <- get_node_count(tree = tree_lepidosaur_mol)
 
 # Prepare the data frame ----
-data1 <- data.frame(path = path1, node = node1)
+data1 <- data.frame(path = path1, node = as.integer(node1))
 # Reorder rows in the data frame to follow the order of tree tip labels
 data1 <- reorder_data(data = data1, tree = tree_lepidosaur_mol)
+
+# Preview the dataset ----
 head(data1)
 ```
 
-It is always good to plot the data before the analyses^10^. Benefits include familiarizing ourselves with the data structure, which covers variable distributions, correlations, and outliers or unexpected data points^10^. Data visualization indicates how the data would change our a priori beliefs.
+It is always good to plot the data before the analyses^10^. Benefits include familiarizing with the data structure, which covers variable distributions, correlations, and outliers or unexpected data points^10^. Data visualization indicates how the data would change our a priori beliefs.
 
 ```{r 1_plot_data, fig.cap = "Fig. 2: Scatter plot of the net molecular divergence (phylogenetic path length) vs. net-speciation event (node count) in Lepidosauria."}
 # Plot data ----
 plot_data_2d(
   data = data1,
-  unit = "subs/site",
+  unit = "substitutions/site",
   pt_size = 1,
   alpha = 0.15,
   plot_width = 8.33,  # width of the HTML document
@@ -103,20 +108,150 @@ plot_data_2d(
 
 <br/>
 
-The plot above is interactive. You can hover your cursor over a data point to see its information (species, path length, and node count). The data point in the lower left corner, the tuatara (*Sphenodon punctatus*), a lizard-like creature from New Zealand, is likely an influential outlier. Its path length and node count are much lower than in other species. Ideally, I would run the analyses with and without tuatara to assess its influence on estimated parameter values. The distributions of the individual variables are difficult to discern from the plot, given the large sample size. Plotting their histograms may be necessary. Otherwise, the scatter plot indicates a weak correlation between path length and node count.
+The plot above is interactive. You can hover your cursor over a data point to see its species name, path length, and node count. The data point in the lower left corner, the tuatara (*Sphenodon punctatus*), a lizard-like creature from New Zealand, is most likely an outlier. Its path length and node count are much lower than in other species. Ideally, I would run the analyses with and without tuatara to assess its influence on estimated parameter values. However, for this document's brevity, I remove tuatara from the dataset (see the following code chunk). Hereafter, the scope of inference becomes squamates (lizards and snakes) instead of lepidosaurs. The distributions of the individual variables are difficult to discern from the plot, given the large sample size. Plotting their histograms is one workaround. Otherwise, the scatter plot indicates a weak correlation between path length and node count.
+
+```{r 1_remove_tuatara}
+# Remove tuatara from the phylogenetic tree ----
+tree_squamate_mol <- ape::drop.tip(
+  phy = tree_lepidosaur_mol,
+  tip = "Sphenodon_punctatus"
+)
+
+# Re-assemble the data frame ----
+path1 <- get_path_length(tree = tree_squamate_mol)
+node1 <- get_node_count(tree = tree_squamate_mol)
+data1 <- data.frame(path = path1, node = as.integer(node1))
+data1 <- reorder_data(data = data1, tree = tree_squamate_mol)
+```
 
 Next, we will fit regression models. The following two steps are necessary to run the models, but you need not fully understand them.
 
 ```{r 1_prepare_matrices}
 # Decompose the phylogenetic variance-covariance matrix into its correlation
 #   (off-diagonal) and variance components (on-diagonal) ----
-vcv1 <- decomp_vcv(tree = tree_lepidosaur_mol, lambda = 1)
+vcv1 <- decomp_vcv(tree = tree_squamate_mol, lambda = 1)
 
 # Create the normalizing matrix D ----
-dmat1 <- create_dmat(tree = tree_lepidosaur_mol)
+dmat1 <- create_dmat(tree = tree_squamate_mol)
 ```
 
-We can encode a phylogenetic tree as a variance-covariance matrix^11^, where each cell represents the shared amount of evolutionary history for a pair of species (covariance). Each cell on the matrix diagonals is the path length (variance). In general, this matrix is how we account for the non-independence between species^12^ and unequal variance (differing path lengths). Simple linear regression models assume equal variance and independence of the residuals or data points. The function `decomp_vcv` decomposes the matrix into its off-diagonal and on-diagonal components necessary for the downstream function `fit_punc_model`. The `create_dmat` function generates the normalizing matrix $D$, which contributes to decorrelating the data. For more details regarding the modifications of a simple regression model to accommodate phylogenetic data, read Symonds and Blomberg^13^.
+We can encode a phylogenetic tree as a variance-covariance matrix^11^, where each cell represents the shared amount of evolutionary history for a pair of species (covariance). Each cell on the matrix's diagonals is the path length (variance). In general, this matrix is how we account for species non-independence^12^ and unequal variance (differing path lengths). The function `decomp_vcv` decomposes the matrix into its off-diagonal and on-diagonal components necessary for the downstream function `fit_punc_model`. The `create_dmat` function generates the normalizing matrix $D$, which contributes to decorrelating the data. For more details regarding the generalization of a simple regression model to accommodate phylogenetic data, read Symonds and Blomberg^13^.
+
+Next, we fit a null, baseline model, regressing path length on itself (`path ~ 1` or $path = \beta_0 + \epsilon$, where $\beta_0$ is the state at the root of the tree [intercept], and $\epsilon$ is the residual error). This mean-only model is the simplest possible model. The estimates are the phylogenetically-normalized mean and variance of the path lengths (not the raw mean and variance). Another measure calculated here is the sum of squared total ($SST$), crucial for measuring how much node count explains path length in the next model.
+
+```{r 1_fit_null_model}
+# Fit the null regression model ----
+null_model1 <- fit_punc_model(
+  data = data1,
+  vcv_parts = vcv1,
+  D = dmat1,
+  model = "p"  # path ~ 1
+)
+
+# Print the model outputs ----
+summary(null_model1$model)
+null_model1$sig2  # variance
+null_model1$sse  # SST (or sum of squared estimates of error [SSE] of the null)
+```
+
+The estimated mean path length or the net molecular divergence in Squamata is $0.578 \pm 0.045$ substitutions/site ($\bar{x} \pm 1.96 \times SEM$). We can change the unit to enhance interpretability (e.g., $578 \pm 45$ substitutions/1,000 sites). The estimated variance is $0.00698$ substitutions/site (or $6.98$ substitutions/1,000 sites). Taking the square root of the variance gives us the estimated standard deviation ($\hat{\sigma} = 0.0835$). This value means that the "average" difference between a path length and the expected value is $83.5$ substitutions/1,000 sites. Another way to view these numbers is that they are the expected mean and variance, assuming a strict molecular clock^14^. This clock model posits that substitutions accumulate gradually at a constant rate through time and across lineages.
+
+Now, we fit the alternative model, which assesses the degree of the punctuational effect. Punctuated evolution means that substitutions tend to accumulate during speciation events. If true, the evolutionary rate would not be clock-like. This model estimates the extent that node count drives deviations from the strict molecular clock (`path ~ node` or $path = \beta_0 + \beta_1node + \epsilon$, where $\beta_1$ is the node count effect).
+
+```{r 1_fit_alt_model}
+# Fit the alternative regression model ----
+alt_model1 <- fit_punc_model(
+  data = data1,
+  vcv_parts = vcv1,
+  D = dmat1,
+  model = "pn"  # path ~ node
+)
+
+# Print the model outputs ----
+summary(alt_model1$model)
+alt_model1$sig2  # variance
+alt_model1$sse  # SSE
+```
+
+The y-intercept is the estimated mean path length when node count is zero ($0.543 \pm 0.044$ substitutions/site or $543 \pm 44$ substitutions/1,000 sites). But, this estimate is not in our interest here. We could center the node count so that the y-intercept is the value when the node count is at its mean. The slope or coefficient of the node count is $0.0040 \pm 0.0005$. For every additional net-speciation event, we see an increase in the estimated net molecular evolution by $4.0 \pm 0.5$ substitutions/1,000 sites. So, path length correlates with node count. And as expected, the calculated variability in path length after accounting for node count ($6.46$ substitutions/1,000 sites) is lower than the unconditional variance ($6.98$ substitutions/1,000 sites).
+
+Below is the plot of the regression fit line.
+
+```{r 1_plot_fit_line, fig.width = 4.75, fig.height = 2.94, fig.cap = "Fig. 3: Squamate molecular evolution seems punctuated. Higher node count (cumulative net-speciation events) corresponds with higher path lengths ($\\hat{\\beta_1} = 4.0 \\pm 0.5 \\text{ substitutions/1,000 sites}$). Regression fit line: $\\hat{path length} = 0.543 + 0.004 \\times node$"}
+# Plot regression fit line ----
+plot_punc_model(
+  data = data1,
+  output_reg = alt_model1,
+  alpha = 0.15,
+  type = "extant_molecular"
+)
+```
+
+<br/>
+
+The regression fit line is a bit off with respect to the data points because it accounts for the non-independence between path lengths (or the shared evolutionary history). Regardless of how the fit line looks, the data suggest non-linearity or a between-clade difference in the path length, which we should investigate in an actual study. The single line does not capture the pattern that, beyond a node count of ~25, a species may have a predicted path length of ~0.6 or ~1.1 substitutions per site, depending on which clade they belong to in the tree.
+
+How significant is this result? The slope's $p\text{-value}$ is $<0.001$. There is a less than $0.001$ chance of observing a slope of $0.004$ or higher if we assume that the null is true (no correlation). However, following the American Statistical Association's (ASA's) statement on $p\text{-values}$, statistical significance does not equal practical significance. The $p\text{-value}$ decreases as the sample size increases. I would argue that the following measures are more informative.
+
+The $R^2$, calculated using the SST and the sum of squared estimates of error ($SSE$) from the null and alternative models, represents how much the explanatory variable explains the variation in the response.
+
+```{r 1_calculate_r2}
+# Calculate R-squared ----
+r_squared1 <- calc_r2(output_null = null_model1, output_alt = alt_model1)
+r_squared1 * 100
+```
+
+Node count explains $7.33%$ of the variability in path length. It means that $7.33%$ of the deviations from the strict molecular clock are attributable to net-speciation events. This value seems small, but it still falls within the 95% confidence interval reported by Pagel et al.^5^ for animals, plants, and fungi ($4.8%$ to $48%$).
+
+The other statistic of interest is the proportion of the total amount of evolution attributable to punctuational effects, calculated using the formula $\frac{2(s-1)\beta}{T}$, where $s$ is the number of tips, $\beta$ is the slope, and $T$ is the sum of all branch lengths^5^.
+
+```{r 1_estimate_punctuational_contribution}
+# Estimate the punctuational contribution to the total divergence ----
+punc_contrib1 <- est_punc_contrib(
+  tree = tree_squamate_mol,
+  output_reg = alt_model1
+)
+punc_contrib1 * 100
+```
+
+About $10%$ of the total squamate molecular evolution is attributable to the detected punctuational effect ($\frac{2(s-1)\hat{\beta}}{T} = 10.05\%$). This number is slightly lower than the lower bound of the 95% confidence interval reported by Pagel et al.^5^ for animals, plants, and fungi ($95\%\text{CI} = (10.6\%, 21.4\%)$).
+
+To prevent overfitting, we compare the fit of the alternative model against that of the null model using the Bayesian Information Criterion ($BIC$^16^). A $BIC$ score difference higher than two ($\Delta BIC>2$) represents positive evidence for the model with the lowest BIC score, the best-fitting one^17^.
+
+```{r 1_compare_models}
+# Compare model fits with BIC
+models1 <- list(null_model1, alt_model1)
+compare_models(models = models1, file = NULL)
+#> =========
+#> BIC Table
+#> =========
+#> 
+#>         model       BIC delta_BIC
+#> 1    path ~ 1 -19131.61     308.3
+#> 2 path ~ node -19439.91       0.0
+```
+
+The regression model with node count as a predictor (alternative) has a much higher likelihood than the null model ($\Delta BIC=308.32$). We should keep node count as a predictor in the model.
+
+However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^18^ for more discussion)? Kozak et al.^19^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche significantly. So, the frequencies of dispersal and vicariance among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies.
+
+[...RESUME:...]
+
+```{r 1_test_node_density_artifact}
+# Test for the node-density artifact ----
+node_density1 <- est_node_density(data = data1, vcv_parts = vcv1)
+summary(node_density1$model)
+node_density1$delta
+```
+
+```{r 1_plot_node_density_test}
+# Plot the node-density test ----
+plot_node_density(data = data1, output_nd = node_density1, unit = "subs/site")
+```
+
+[...RESUME: Simulate...]
+
+[...UPDATE: GitHub repo...]
 
 ## 2. Body size evolution in mammals
 
@@ -151,3 +286,15 @@ We can encode a phylogenetic tree as a variance-covariance matrix^11^, where eac
 12. Felsenstein, J. Phylogenies and the comparative method. *Am. Nat.* __125__, 1–15 (1985).
 
 13. Symonds, M. R. E. & Blomberg, S. P. A primer on phylogenetic generalised least squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 105–130 (Springer Berlin Heidelberg, 2014).
+
+14. Zuckerkandl, E. & Pauling, L. Evolutionary divergence and convergence in proteins. in *Evolving Genes and Proteins* (eds. Bryson, V. & Vogel, H. J.) 97–166 (Academic Press, 1965).
+
+15. Wasserstein, R. L. & Lazar, N. A. The ASA statement on *p*-values: Context, process, and purpose. *Am. Stat.* __70__, 129–133 (2016).
+
+16. Schwarz, G. Estimating the dimension of a model. *Ann. Stat.* __6__, 461–464 (1978).
+
+17. Raftery, A. E. Bayesian model selection in social research. *Sociol. Methodol.* __25__, 111–163 (1995).
+
+18. Zink, R. M., Blackwell-Rago, R. C. & Ronquist, F. The shifting roles of dispersal and vicariance in biogeography. *Proc. R. Soc. B* __267__, 497–503 (2000).
+
+19. Kozak, K. H., Weisrock, D. W. & Larson, A. Rapid lineage accumulation in a non-adaptive radiation: Phylogenetic analysis of diversification rates in eastern North American woodland salamanders (Plethodontidae: *Plethodon*). *Proc. R. Soc. B* __273__, 539–546 (2006).
