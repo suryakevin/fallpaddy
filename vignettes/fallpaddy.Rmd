@@ -48,7 +48,7 @@ Explaining the diversity of life today and in the past is the grail of evolution
 
 But, the idea that ~100% of divergence happens during speciation is extreme. Rather than debating gradual versus punctuated scenarios, we can estimate how much the variability of a trait in a group is attributable to speciation events (0%–100%). Mark Pagel and colleagues at the University of Reading devised such methods (which we will review below) to infer that net speciation explains ~16% of the total molecular evolution in extant plants, fungi, and animals^4,5^. The method applies to any evolving system, including human languages^6^. Up to 33% of vocabulary differences are attributable to language-splitting events^6^. Punctuated evolution is, therefore, a widespread pattern in how genomes, phenotypes, and cultures evolve. We need to quantify this pattern.
 
-Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution.
+Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution. 
 
 ## Why `fallpaddy`?
 
@@ -233,21 +233,37 @@ compare_models(models = models1, file = NULL)
 
 The regression model with node count as a predictor (alternative) has a much higher likelihood than the null model ($\Delta BIC=308.32$). We should keep node count as a predictor in the model.
 
-However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^18^ for more discussion)? Kozak et al.^19^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche significantly. So, the frequencies of dispersal and vicariance among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies.
+However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^18^ for more discussion)? Kozak et al.^19^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche. So, the dispersal and vicariance frequencies among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies. A good start would be a case study on the biogeography of Caribbean anole lizards^20^.
 
-[...RESUME:...]
+We need to check for potential statistical biases. A crucial one is the node-density artifact: branches tend to be shorter than their actual lengths in undersampled parts of a phylogenetic tree^21^. This artifact can bias the regression model towards detecting punctuated evolution even if this is not true (i.e., false positive). A symptom of this artifact would be a positive curvilinear relationship between the node count and path length ($\delta > 1$; see below).
 
 ```{r 1_test_node_density_artifact}
 # Test for the node-density artifact ----
 node_density1 <- est_node_density(data = data1, vcv_parts = vcv1)
+
+# Print the model outputs ----
 summary(node_density1$model)
 node_density1$delta
 ```
 
-```{r 1_plot_node_density_test}
+I fitted a log-log model above ($\widehat{ln(node)} = \beta_0 + \beta_1ln(path) = 2.38 + 0.82ln(path)$) and rearranged it so that the parameter interpretation is on the original scale ($\widehat{node} = \beta_0path^{\delta} = 10.80path^{0.82}$). There is little evidence for the node-density artifact since $\delta = 0.82 \text{ } \pm 0.08$. The fit line in the plot below does not seem curved.
+
+```{r 1_plot_node_density_test, fig.width = 4.75, fig.height = 2.94, fig.cap = "Fig 4: The node-density artifact, which can bias the regression analysis, does not seem to be present ($\\delta = 0.82$). A symptom of this artifact, in this case, would be a positive curvilinear relationship ($\\delta > 1$). The fit line seems off because it arises from data points normalized against their evolutionary history (i.e., phylogenetically corrected)."}
 # Plot the node-density test ----
 plot_node_density(data = data1, output_nd = node_density1, unit = "subs/site")
 ```
+
+<br/>
+
+We also still need to check the assumptions of a linear regression model^22,23^. Independence is an issue whenever we sample species, which is why our regression model accounts for the phylogenetic tree. Regarding the other assumptions, the plot below is a one-stop diagnostic shop.
+
+```{r 1_plot_regression_diagnostics, fig.width = 4.75, fig.height = 2.94, fig.cap = "Diagnostics do not indicate violations of the normality and linearity assumptions. However, there is evidence of unequal variance as the variability of the phylogenetic residuals increases and then decreases with the fitted values."}
+plot_diagnostics(output_reg = alt_model1)
+```
+
+<br/>
+
+The distribution of the phylogenetic residuals is close to normal, and we see little-to-no changes in the average residuals across the fitted values (i.e., no indication of non-linearity). However, the constant variance assumption seems invalid. The violation of this assumption does not mean we should question the small punctuational effect we detected earlier, only the variance estimate.
 
 [...RESUME: Simulate...]
 
@@ -298,3 +314,11 @@ plot_node_density(data = data1, output_nd = node_density1, unit = "subs/site")
 18. Zink, R. M., Blackwell-Rago, R. C. & Ronquist, F. The shifting roles of dispersal and vicariance in biogeography. *Proc. R. Soc. B* __267__, 497–503 (2000).
 
 19. Kozak, K. H., Weisrock, D. W. & Larson, A. Rapid lineage accumulation in a non-adaptive radiation: Phylogenetic analysis of diversification rates in eastern North American woodland salamanders (Plethodontidae: *Plethodon*). *Proc. R. Soc. B* __273__, 539–546 (2006).
+
+20. Losos, J. B. *Lizards in an Evolutionary Tree: Ecology and Adaptive Radiation of Anoles*. (Univ of California Press, 2011).
+
+21. Venditti, C., Meade, A. & Pagel, M. Detecting the node-density artifact in phylogeny reconstruction. *Syst. Biol.* __55__, 637–643 (2006).
+
+22. Freckleton, R. P. The seven deadly sins of comparative analysis. *J. Evol. Biol.* __22__, 1367–1375 (2009).
+
+23. Mundry, R. Statistical Issues and Assumptions of Phylogenetic Generalized Least Squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 131–153 (Springer, 2014). doi:10.1007/978-3-662-43550-2_6.
