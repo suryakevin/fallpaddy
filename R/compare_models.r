@@ -5,7 +5,7 @@
 #'   maximum likelihood (or roughly the fit of the model to the data),
 #'   accounting for model complexity. A \eqn{BIC} difference between two models
 #'   (\eqn{\Delta BIC}) is equal to the Bayes Factor. A \eqn{\Delta BIC > 2}
-#'   represents at least a 100 times difference in the likelihoods.
+#'   represents at least a 100-times difference in the likelihoods.
 #'
 #' @param models A list of models to compare (e.g.,
 #'   `models <- list(model1, model2, model3)`) where each model is an output

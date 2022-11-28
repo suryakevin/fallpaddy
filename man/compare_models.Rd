@@ -23,7 +23,7 @@ Criterion (\eqn{BIC}). The model with the lowest \eqn{BIC} has the highest
 maximum likelihood (or roughly the fit of the model to the data),
 accounting for model complexity. A \eqn{BIC} difference between two models
 (\eqn{\Delta BIC}) is equal to the Bayes Factor. A \eqn{\Delta BIC > 2}
-represents at least a 100 times difference in the likelihoods.
+represents at least a 100-times difference in the likelihoods.
 }
 \references{
 \href{https://doi.org/10.1214/aos/1176344136}{Schwarz (1978)};
