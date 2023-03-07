@@ -52,7 +52,7 @@ Punctuated evolution alone does not explain the diversity of life, and it is not
 
 ## Why `fallpaddy`?
 
-There are a few reasons for developing the `fallpaddy` package. My colleagues and I are generalizing Pagel et al.'s^5^ method to cover serially sampled taxa, such as extinct dinosaurs and viruses, including SARS-CoV-2 (Surya et al., in review). I want this modified model to be easily accessible to evolutionary biologists, including myself. No one wants to keep writing long `R` or `Python` scripts if they can streamline the process with functions. Second, this package has a function for simulating punctuated evolution in a manner more flexible than in other packages. This function allows the user to specify the punctuational contribution to the total trait divergence (0 to 1) instead of fixing it to one. Lastly, this package is a one-stop shop for studying punctuated evolution. It contains tools for data extraction, wrangling, visualization, and diagnostics.
+There are a few reasons for developing the `fallpaddy` package. My colleagues and I are generalizing Pagel et al.'s^5^ method to cover serially sampled taxa, such as extinct dinosaurs and viruses, including SARS-CoV-2^8^. I want this modified model to be easily accessible to evolutionary biologists, including myself. No one wants to keep writing long `R` or `Python` scripts if they can streamline the process with functions. Second, this package has a function for simulating punctuated evolution in a manner more flexible than in other packages. This function allows the user to specify the punctuational contribution to the total trait divergence (0 to 1) instead of fixing it to one. Lastly, this package is a one-stop shop for studying punctuated evolution. It contains tools for data extraction, wrangling, visualization, and diagnostics.
 
 This package, however, uses maximum likelihood, not Bayesian. `fallpaddy` is most useful for quick exploratory analyses or if the dataset size precludes the computationally heavy Bayesian workhorse, Markov chain Monte Carlo (MCMC). My colleagues and I will not be developing Bayesian functions in this package. Expect their availability in the `Python` library `Sci-Phy` [(link)](https://chrisorgan.github.io/code/) in the future.
 
@@ -65,9 +65,9 @@ library(fallpaddy)
 
 ## 1. Molecular evolution in snakes and lizards
 
-Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^8^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). It is rooted and fully bifurcating. Below is a plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using Adobe Illustrator to maximize the data-ink ratio^9^. But, for a quick tree visualization, this plot is sufficient.
+Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-only dataset. The dataset is a molecular phylogenetic tree of Lepidosauria (tuatara, snakes, and lizards) comprising 4,162 species. I took the tree from Pyron et al.^9^. They inferred a maximum likelihood tree from a concatenated alignment of five mitochondrial and seven nuclear genes (12,896 bp in total). It is rooted and fully bifurcating. Below is a plot of the tree. Ideally, I would color the branches by clades and delete the axis line and axis ticks using Adobe Illustrator to maximize the data-ink ratio^10^. But, for a quick tree visualization, this plot is sufficient.
 
-```{r 1_plot_tree, fig.cap = "Fig. 1: Molecular phylogenetic tree of 4,162 lepidosaur species from Pyron et al.^8^."}
+```{r 1_plot_tree, fig.cap = "Fig. 1: Molecular phylogenetic tree of 4,162 lepidosaur species from Pyron et al.^9^."}
 # Plot tree ----
 plot_tree(
   tree = tree_lepidosaur_mol,
@@ -91,7 +91,7 @@ data1 <- reorder_data(data = data1, tree = tree_lepidosaur_mol)
 head(data1)
 ```
 
-It is always good to plot the data before the analyses^10^. Benefits include familiarizing with the data structure, which covers variable distributions, correlations, and outliers or unexpected data points^10^. Data visualization indicates how the data would change our a priori beliefs.
+It is always good to plot the data before the analyses^11^. Benefits include familiarizing with the data structure, which covers variable distributions, correlations, and outliers or unexpected data points^11^. Data visualization indicates how the data would change our a priori beliefs.
 
 ```{r 1_plot_data, fig.cap = "Fig. 2: Scatter plot of the net molecular divergence (phylogenetic path length) vs. net-speciation event (node count) in Lepidosauria."}
 # Plot data ----
@@ -135,7 +135,7 @@ vcv1 <- decomp_vcv(tree = tree_squamate_mol, lambda = 1)
 dmat1 <- create_dmat(tree = tree_squamate_mol)
 ```
 
-We can encode a phylogenetic tree as a variance-covariance matrix^11^, where each cell represents the shared amount of evolutionary history for a pair of species (covariance). Each cell on the matrix's diagonals is the path length (variance). In general, this matrix is how we account for species non-independence^12^ and unequal variance (differing path lengths). The function `decomp_vcv` decomposes the matrix into its off-diagonal and on-diagonal components necessary for the downstream function `fit_punc_model`. The `create_dmat` function generates the normalizing matrix $D$, which contributes to decorrelating the data. For more details regarding the generalization of a simple regression model to accommodate phylogenetic data, read Symonds and Blomberg^13^.
+We can encode a phylogenetic tree as a variance-covariance matrix^12^, where each cell represents the shared amount of evolutionary history for a pair of species (covariance). Each cell on the matrix's diagonals is the path length (variance). In general, this matrix is how we account for species non-independence^13^ and unequal variance (differing path lengths). The function `decomp_vcv` decomposes the matrix into its off-diagonal and on-diagonal components necessary for the downstream function `fit_punc_model`. The `create_dmat` function generates the normalizing matrix $D$, which contributes to decorrelating the data. For more details regarding the generalization of a simple regression model to accommodate phylogenetic data, read Symonds and Blomberg^14^.
 
 Next, we fit a null, baseline model, regressing path length on itself (`path ~ 1` or $path = \beta_0 + \epsilon$, where $\beta_0$ is the state at the root of the tree [intercept], and $\epsilon$ is the residual error). This mean-only model is the simplest possible model. The estimates are the phylogenetically-normalized mean and variance of the path lengths (not the raw mean and variance). Another measure calculated here is the sum of squared total ($SST$), crucial for measuring how much node count explains path length in the next model.
 
@@ -154,7 +154,7 @@ null_model1$sig2  # variance
 null_model1$sse  # SST (or sum of squared estimates of error [SSE] of the null)
 ```
 
-The estimated mean path length or the net molecular divergence in Squamata is $0.578 \pm 0.045$ substitutions/site ($\bar{x} \pm 1.96 \times SEM$). We can change the unit to enhance interpretability (e.g., $578 \pm 45$ substitutions/1,000 sites). The estimated variance is $0.00698$ substitutions/site (or $6.98$ substitutions/1,000 sites). Taking the square root of the variance gives us the estimated standard deviation ($\hat{\sigma} = 0.0835$). This value means that the "average" difference between a path length and the expected value is $83.5$ substitutions/1,000 sites. Another way to view these numbers is that they are the expected mean and variance, assuming a strict molecular clock^14^. This clock model posits that substitutions accumulate gradually at a constant rate through time and across lineages.
+The estimated mean path length or the net molecular divergence in Squamata is $0.578 \pm 0.045$ substitutions/site ($\bar{x} \pm 1.96 \times SEM$). We can change the unit to enhance interpretability (e.g., $578 \pm 45$ substitutions/1,000 sites). The estimated variance is $0.00698$ substitutions/site (or $6.98$ substitutions/1,000 sites). Taking the square root of the variance gives us the estimated standard deviation ($\hat{\sigma} = 0.0835$). This value means that the "average" difference between a path length and the expected value is $83.5$ substitutions/1,000 sites. Another way to view these numbers is that they are the expected mean and variance, assuming a strict molecular clock^15^. This clock model posits that substitutions accumulate gradually at a constant rate through time and across lineages.
 
 Now, we fit the alternative model, which assesses the degree of the punctuational effect. Punctuated evolution means that substitutions tend to accumulate during speciation events. If true, the evolutionary rate would not be clock-like. This model estimates the extent that node count drives deviations from the strict molecular clock (`path ~ node` or $path = \beta_0 + \beta_1node + \epsilon$, where $\beta_1$ is the node count effect).
 
@@ -191,7 +191,7 @@ plot_punc_model(
 
 The regression fit line is a bit off with respect to the data points because it accounts for the non-independence between path lengths (or the shared evolutionary history). Regardless of how the fit line looks, the data suggest non-linearity or a between-clade difference in the path length, which we should investigate in an actual study. The single line does not capture the pattern that, beyond a node count of ~25, a species may have a predicted path length of ~0.6 or ~1.1 substitutions per site, depending on which clade they belong to in the tree.
 
-How significant is this result? The slope's $p\text{-value}$ is $<0.001$. There is a less than $0.001$ chance of observing a slope of $0.004$ or higher if we assume that the null is true (no correlation). However, following the American Statistical Association's (ASA's) statement on $p\text{-values}$, statistical significance does not equal practical significance. The $p\text{-value}$ decreases as the sample size increases. I would argue that the following measures are more informative.
+How significant is this result? The slope's $p\text{-value}$ is $<0.001$. There is a less than $0.001$ chance of observing a slope of $0.004$ or higher if we assume that the null is true (no correlation). However, following the American Statistical Association's (ASA's) statement on $p\text{-values}$, statistical significance does not equal practical significance^16^. The $p\text{-value}$ decreases as the sample size increases. I would argue that the following measures are more informative.
 
 The $R^2$, calculated using the SST and the sum of squared estimates of error ($SSE$) from the null and alternative models, represents how much the explanatory variable explains the variation in the response.
 
@@ -216,7 +216,7 @@ punc_contrib1 * 100
 
 About $10%$ of the total squamate molecular evolution is attributable to the detected punctuational effect ($\frac{2(s-1)\hat{\beta}}{T} = 10.05\%$). This number is slightly lower than the lower bound of the 95% confidence interval reported by Pagel et al.^5^ for animals, plants, and fungi ($95\%\text{CI} = (10.6\%, 21.4\%)$).
 
-To prevent overfitting, we compare the fit of the alternative model against that of the null model using the Bayesian Information Criterion ($BIC$^16^). A $BIC$ score difference higher than two ($\Delta BIC>2$) represents positive evidence for the model with the lowest BIC score, the best-fitting one^17^.
+To prevent overfitting, we compare the fit of the alternative model against that of the null model using the Bayesian Information Criterion ($BIC$^17^). A $BIC$ score difference higher than two ($\Delta BIC>2$) represents positive evidence for the model with the lowest BIC score, the best-fitting one^18^.
 
 ```{r 1_compare_models}
 # Compare model fits with BIC
@@ -233,9 +233,9 @@ compare_models(models = models1, file = NULL)
 
 The regression model with node count as a predictor (alternative) has a much higher likelihood than the null model ($\Delta BIC=308.32$). We should keep node count as a predictor in the model.
 
-However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^18^ for more discussion)? Kozak et al.^19^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche. So, the dispersal and vicariance frequencies among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies. A good start would be a case study on the biogeography of Caribbean anole lizards^20^.
+However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^19^ for more discussion)? Kozak et al.^20^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche. So, the dispersal and vicariance frequencies among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies. A good start would be a case study on the biogeography of Caribbean anole lizards^21^.
 
-We need to check for potential statistical biases. A crucial one is the node-density artifact: branches tend to be shorter than their actual lengths in undersampled parts of a phylogenetic tree^21^. This artifact can bias the regression model towards detecting punctuated evolution even if this is not true (i.e., false positive). A symptom of this artifact would be a positive curvilinear relationship between the node count and path length ($\delta > 1$; see below).
+We need to check for potential statistical biases. A crucial one is the node-density artifact: branches tend to be shorter than their actual lengths in undersampled parts of a phylogenetic tree^22^. This artifact can bias the regression model towards detecting punctuated evolution even if this is not true (i.e., false positive). A symptom of this artifact would be a positive curvilinear relationship between the node count and path length ($\delta > 1$; see below).
 
 ```{r 1_test_node_density_artifact}
 # Test for the node-density artifact ----
@@ -255,7 +255,7 @@ plot_node_density(data = data1, output_nd = node_density1, unit = "subs/site")
 
 <br/>
 
-We also still need to check the assumptions of a linear regression model^22,23^. Independence is an issue whenever we sample species, which is why our regression model accounts for the phylogenetic tree. Regarding the other assumptions, the plot below is a one-stop diagnostic shop.
+We also still need to check the assumptions of a linear regression model^23,24^. Independence is an issue whenever we sample species, which is why our regression model accounts for the phylogenetic tree. Regarding the other assumptions, the plot below is a one-stop diagnostic shop.
 
 ```{r 1_plot_regression_diagnostics, fig.width = 4.75, fig.height = 2.94, fig.cap = "Diagnostics do not indicate violations of the normality and linearity assumptions. However, there is evidence of unequal variance as the variability of the phylogenetic residuals increases and then decreases with the fitted values."}
 plot_diagnostics(output_reg = alt_model1)
@@ -291,34 +291,36 @@ The distribution of the phylogenetic residuals is close to normal, and we see li
 
 7. Pagel, M., O'Donovan, C. & Meade, A. General statistical model shows that macroevolutionary patterns and processes are consistent with Darwinian gradualism. *Nat. Commun.* __13__, 1113 (2022).
 
-8. Pyron, R. A., Burbrink, F. T. & Wiens, J. J. A phylogeny and revised classification of Squamata, including 4161 species of lizards and snakes. *BMC Evol. Biol.* __13__, 93 (2013).
+8. Surya, K., Gardner, J. D. & Organ, C. L. Detecting punctuated evolution in SARS-CoV-2 over the first year of the pandemic. *Frontiers in Virology* __3__, (2023).
 
-9. Tufte, E. R. *The Visual Display of Quantitative Information*. (Graphics Press, 1983).
+9. Pyron, R. A., Burbrink, F. T. & Wiens, J. J. A phylogeny and revised classification of Squamata, including 4161 species of lizards and snakes. *BMC Evol. Biol.* __13__, 93 (2013).
 
-10. Steel, E. A., Kennedy, M. C., Cunningham, P. G. & Stanovick, J. S. Applied statistics in ecology: Common pitfalls and simple solutions. *Ecosphere* __4__, art115 (2013).
+10. Tufte, E. R. *The Visual Display of Quantitative Information*. (Graphics Press, 1983).
 
-11. Grafen, A. The phylogenetic regression. *Philos. Trans. R. Soc. Lond. B Biol. Sci.* __326__, 119–157 (1989).
+11. Steel, E. A., Kennedy, M. C., Cunningham, P. G. & Stanovick, J. S. Applied statistics in ecology: Common pitfalls and simple solutions. *Ecosphere* __4__, art115 (2013).
 
-12. Felsenstein, J. Phylogenies and the comparative method. *Am. Nat.* __125__, 1–15 (1985).
+12. Grafen, A. The phylogenetic regression. *Philos. Trans. R. Soc. Lond. B Biol. Sci.* __326__, 119–157 (1989).
 
-13. Symonds, M. R. E. & Blomberg, S. P. A primer on phylogenetic generalised least squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 105–130 (Springer Berlin Heidelberg, 2014).
+13. Felsenstein, J. Phylogenies and the comparative method. *Am. Nat.* __125__, 1–15 (1985).
 
-14. Zuckerkandl, E. & Pauling, L. Evolutionary divergence and convergence in proteins. in *Evolving Genes and Proteins* (eds. Bryson, V. & Vogel, H. J.) 97–166 (Academic Press, 1965).
+14. Symonds, M. R. E. & Blomberg, S. P. A primer on phylogenetic generalised least squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 105–130 (Springer Berlin Heidelberg, 2014).
 
-15. Wasserstein, R. L. & Lazar, N. A. The ASA statement on *p*-values: Context, process, and purpose. *Am. Stat.* __70__, 129–133 (2016).
+15. Zuckerkandl, E. & Pauling, L. Evolutionary divergence and convergence in proteins. in *Evolving Genes and Proteins* (eds. Bryson, V. & Vogel, H. J.) 97–166 (Academic Press, 1965).
 
-16. Schwarz, G. Estimating the dimension of a model. *Ann. Stat.* __6__, 461–464 (1978).
+16. Wasserstein, R. L. & Lazar, N. A. The ASA statement on *p*-values: Context, process, and purpose. *Am. Stat.* __70__, 129–133 (2016).
 
-17. Raftery, A. E. Bayesian model selection in social research. *Sociol. Methodol.* __25__, 111–163 (1995).
+17. Schwarz, G. Estimating the dimension of a model. *Ann. Stat.* __6__, 461–464 (1978).
 
-18. Zink, R. M., Blackwell-Rago, R. C. & Ronquist, F. The shifting roles of dispersal and vicariance in biogeography. *Proc. R. Soc. B* __267__, 497–503 (2000).
+18. Raftery, A. E. Bayesian model selection in social research. *Sociol. Methodol.* __25__, 111–163 (1995).
 
-19. Kozak, K. H., Weisrock, D. W. & Larson, A. Rapid lineage accumulation in a non-adaptive radiation: Phylogenetic analysis of diversification rates in eastern North American woodland salamanders (Plethodontidae: *Plethodon*). *Proc. R. Soc. B* __273__, 539–546 (2006).
+19. Zink, R. M., Blackwell-Rago, R. C. & Ronquist, F. The shifting roles of dispersal and vicariance in biogeography. *Proc. R. Soc. B* __267__, 497–503 (2000).
 
-20. Losos, J. B. *Lizards in an Evolutionary Tree: Ecology and Adaptive Radiation of Anoles*. (Univ of California Press, 2011).
+20. Kozak, K. H., Weisrock, D. W. & Larson, A. Rapid lineage accumulation in a non-adaptive radiation: Phylogenetic analysis of diversification rates in eastern North American woodland salamanders (Plethodontidae: *Plethodon*). *Proc. R. Soc. B* __273__, 539–546 (2006).
 
-21. Venditti, C., Meade, A. & Pagel, M. Detecting the node-density artifact in phylogeny reconstruction. *Syst. Biol.* __55__, 637–643 (2006).
+21. Losos, J. B. *Lizards in an Evolutionary Tree: Ecology and Adaptive Radiation of Anoles*. (Univ of California Press, 2011).
 
-22. Freckleton, R. P. The seven deadly sins of comparative analysis. *J. Evol. Biol.* __22__, 1367–1375 (2009).
+22. Venditti, C., Meade, A. & Pagel, M. Detecting the node-density artifact in phylogeny reconstruction. *Syst. Biol.* __55__, 637–643 (2006).
 
-23. Mundry, R. Statistical Issues and Assumptions of Phylogenetic Generalized Least Squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 131–153 (Springer, 2014). doi:10.1007/978-3-662-43550-2_6.
+23. Freckleton, R. P. The seven deadly sins of comparative analysis. *J. Evol. Biol.* __22__, 1367–1375 (2009).
+
+24. Mundry, R. Statistical Issues and Assumptions of Phylogenetic Generalized Least Squares. in *Modern Phylogenetic Comparative Methods and Their Application in Evolutionary Biology: Concepts and Practice* (ed. Garamszegi, L. Z.) 131–153 (Springer, 2014). doi:10.1007/978-3-662-43550-2_6.

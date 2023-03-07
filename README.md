@@ -39,12 +39,11 @@ If you have questions, thoughts, or suggestions, you can email me at
 [sadikin.kevin@gmail.com](mailto:sadikin.kevin@gmail.com) or open new issues or
 pull requests (if you're comfortable with these `git` functionalities).
 
-If you end up using this package (thanks!), please cite the following paper. If
-it's still not published yet, you can use the bibliography format typical for
-any other `R` packages.
+If you end up using this package (thanks!), please cite the following paper.
 
 > Surya, K., Gardner, J.D. & Organ, C. Detecting punctuated evolution in
-> SARS-CoV-2 over the first year of the pandemic. In review.
+> SARS-CoV-2 over the first year of the pandemic. *Frontiers in Virology*.
+> [Link](https://doi.org/10.3389/fviro.2023.1066147)
 
 You should also cite relevant publications from the Reading Evolutionary
 Biology Group since they were the ones who established the foundational

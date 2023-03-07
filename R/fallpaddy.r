@@ -40,7 +40,9 @@
 #' @author Kevin Surya
 #'
 #' @references Surya, K., Gardner, J.D. & Organ, C. Detecting punctuated
-#'   evolution in SARS-CoV-2 over the first year of the pandemic. In review.
+#'   evolution in SARS-CoV-2 over the first year of the pandemic.
+#'   \emph{Frontiers in Virology}.
+#'   \href{https://doi.org/10.3389/fviro.2023.1066147}{Link}.
 #'
 #' @docType package
 #'
