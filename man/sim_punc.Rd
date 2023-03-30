@@ -42,14 +42,12 @@ user-specified signature of punctuated evolution (i.e., the speciational
 contribution to the total divergence).
 }
 \details{
-In this simulation, the default is that evolution follows a strict
-clock. As we turn the knob, increasing the speciational contribution to
-the total divergence, the molecular or morphological evolution becomes
-less clock-like, and sampling time predicts divergence less and less.
-Therefore, the range of scenarios that this simulation can create is still
-limited. For example, this simulation cannot create deviations from the
-strict clock unrelated to punctuation (e.g., single-branch or clade-wide
-rate shifts).
+In this simulation, as we turn the knob, increasing the
+speciational contribution to the total divergence, the molecular or
+morphological evolution becomes less clock-like, and sampling time
+predicts divergence less and less. This simulation, however, cannot create
+deviations from the strict clock unrelated to punctuation (e.g.,
+single-branch or clade-wide rate shifts).
 }
 \references{
 \href{https://doi.org/10.1214/aoms/1177730285}{Kendall (1948)};

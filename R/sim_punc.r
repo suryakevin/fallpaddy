@@ -7,14 +7,12 @@
 #'   user-specified signature of punctuated evolution (i.e., the speciational
 #'   contribution to the total divergence).
 #'
-#' @details In this simulation, the default is that evolution follows a strict
-#'   clock. As we turn the knob, increasing the speciational contribution to
-#'   the total divergence, the molecular or morphological evolution becomes
-#'   less clock-like, and sampling time predicts divergence less and less.
-#'   Therefore, the range of scenarios that this simulation can create is still
-#'   limited. For example, this simulation cannot create deviations from the
-#'   strict clock unrelated to punctuation (e.g., single-branch or clade-wide
-#'   rate shifts).
+#' @details In this simulation, as we turn the knob, increasing the
+#'   speciational contribution to the total divergence, the molecular or
+#'   morphological evolution becomes less clock-like, and sampling time
+#'   predicts divergence less and less. This simulation, however, cannot create
+#'   deviations from the strict clock unrelated to punctuation (e.g.,
+#'   single-branch or clade-wide rate shifts).
 #'
 #' @param n Number of tips in the tree
 #' @param age The total depth of the timetree; the unit is up to the user
@@ -69,6 +67,8 @@ sim_punc <- function(
     # simulates molecular/morphological tree
     kappa <- 0.9917222 + (-1.5558826 * punc) + (1.1931311 * punc^2) +
              (-0.6306910 * punc^3)  # see scribbles.r
+      # as 'punc' approaches zero, 'kappa' approaches one
+      #   (no change in the timetree)
     tree_evol <- transformPhylo(phy = tree_time, model = "kappa", kappa = kappa)
     max_net_evol <- age * rate
     tree_evol$edge.length <-
@@ -81,13 +81,10 @@ sim_punc <- function(
   } else {
     # simulates non-ultrametric timetree
     birth <- runif(n = 1, min = 1, max = 5)
-    death <- birth - 0.15
+    death <- birth - 0.15  # to avoid extreme scenarios
     tree_time <- rphylo(n = n, birth = birth, death = death, fossils = TRUE)
-    root_tip <- diag(vcv(phy = tree_time))
-    extant_keep <- names(root_tip[root_tip < max(root_tip)])
-    tree_time <- keep.tip(phy = tree_time, tip = extant_keep)
-    if (length(tree_time$tip.label) > 100) {
-      tip_keep <- sample(x = tree_time$tip.label, size = 100)
+    if (length(tree_time$tip.label) > n) {
+      tip_keep <- sample(x = tree_time$tip.label, size = n)
       tree_time <- keep.tip(phy = tree_time, tip = tip_keep)
     }
     tree_time$edge.length <-
