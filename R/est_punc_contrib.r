@@ -21,10 +21,10 @@ est_punc_contrib <- function(tree, output_reg) {
   model <- output_reg$model
   if (model$dims$p == 2) {  # path ~ node
     beta <- model$coefficients[[2]]  # punctuational contribution at each node
-  } else if (model$dims$p > 2 && names(model$coefficients[3] == "node")) {
+  } else if (model$dims$p > 2 && names(model$coefficients[3]) == "node") {
       # path ~ time + node OR more complex models
     beta <- model$coefficients[[3]]
-  } else if (model$dims$p > 2 && names(model$coefficients[2] == "node")) {
+  } else if (model$dims$p > 2 && names(model$coefficients[2]) == "node") {
       # path ~ node + group OR more complex models
     beta <- model$coefficients[[2]]
   }
