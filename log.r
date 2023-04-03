@@ -199,5 +199,12 @@ use_vignette(name = "fallpaddy")
 #> • Modify 'vignettes/fallpaddy.Rmd'
 build_rmd()
 
+# Create the package citation ----
+use_citation()
+#> ✔ Setting active project to 'C:/Users/sadik/Documents/GitHub/fallpaddy'
+#> ✔ Creating 'inst/'
+#> ✔ Writing 'inst/CITATION'
+#> • Modify 'inst/CITATION'
+
 # Check `fallpaddy` ----
 check()

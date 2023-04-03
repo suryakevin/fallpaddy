@@ -1,0 +1,11 @@
+citHeader("To cite fallpaddy in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Detecting punctuated evolution in SARS-CoV-2 over the first year of the pandemic",
+  author   = "Kevin Surya, Jacob D. Gardner, and Chris L. Organ",
+  journal  = "Frontiers in Virology",
+  year     = 2023,
+  volume   = 3,
+  doi      = "10.3389/fviro.2023.1066147",
+)
