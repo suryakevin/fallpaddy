@@ -8,4 +8,5 @@ citEntry(
   year     = 2023,
   volume   = 3,
   doi      = "10.3389/fviro.2023.1066147",
+  textVersion = "Surya, K., Gardner, J.D. & Organ, C. Detecting punctuated evolution in SARS-CoV-2 over the first year of the pandemic. Frontiers in Virology. DOI: 10.3389/fviro.2023.1066147"
 )
