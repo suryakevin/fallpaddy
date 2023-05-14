@@ -4,6 +4,8 @@
 #'
 #' @param tree An object of class `phylo`
 #' @param unit Branch length unit (e.g., subs/site and mya)
+#' @param rev A logical indicating whether to reverse the x-axis time scale
+#'   (defaults to FALSE, e.g., 0, 1, 2, ...)
 #' @param size Branch thickness
 #'
 #' @return This function returns an object of the `ggtree` class.
@@ -16,11 +18,21 @@
 #'
 #' @export
 #'
-plot_tree <- function(tree, unit, size = 0.3) {
-  plot <-
-    ggtree(tr = tree, size = size) +
-      theme_tree2() +
-      labs(caption = unit)
+plot_tree <- function(tree, unit, rev = FALSE, size = 0.3) {
+  if (rev == FALSE) {
+    plot <-
+      ggtree(tr = tree, size = size) +
+        theme_tree2() +
+        labs(caption = unit)
+  } else {
+    plot <-
+      revts(
+        treeview = ggtree(tr = tree, size = size) +
+          theme_tree2() +
+          scale_x_continuous(labels = abs) +
+          labs(caption = unit)
+      )
+  }
   return(plot)
 }
 
@@ -33,6 +45,8 @@ plot_tree <- function(tree, unit, size = 0.3) {
 #' @param data A data frame with taxon name in the row name and the group
 #'   assignment in the 1st column
 #' @param unit Branch length unit (e.g., subs/site and mya)
+#' @param rev A logical indicating whether to reverse the x-axis time scale
+#'   (defaults to FALSE, e.g., 0, 1, 2, ...)
 #' @param size Branch thickness
 #'
 #' @return This function returns an object of the `ggtree` class.
@@ -47,7 +61,7 @@ plot_tree <- function(tree, unit, size = 0.3) {
 #'
 #' @export
 #'
-plot_tree_color <- function(tree, data, unit, size = 0.3) {
+plot_tree_color <- function(tree, data, unit, rev = FALSE, size = 0.3) {
   # prepares data
   data <- cbind(rownames(data), data)
   colnames(data)[1] <- "taxon"
@@ -66,9 +80,23 @@ plot_tree_color <- function(tree, data, unit, size = 0.3) {
   names(group_list) <- group_lvl
   tr_object <- groupOTU(tree, group_list)
   # plots tree
-  plot <-
-    ggtree(tr = tr_object, aes(color = .data$group), size = size) +
-      theme_tree2(legend = "right", legend.title = element_blank()) +
-      labs(caption = unit)
+  if (rev == FALSE) {
+      plot <-
+        ggtree(tr = tr_object, aes(color = .data$group), size = size) +
+          theme_tree2(legend = "right", legend.title = element_blank()) +
+          labs(caption = unit)
+  } else {
+    plot <-
+      revts(
+        treeview = ggtree(
+          tr = tr_object,
+          aes(color = .data$group),
+          size = size
+        ) +
+          theme_tree2(legend = "right", legend.title = element_blank()) +
+          scale_x_continuous(labels = abs) +
+          labs(caption = unit)
+      )
+  }
   return(plot)
 }

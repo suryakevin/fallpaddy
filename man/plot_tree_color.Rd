@@ -4,7 +4,7 @@
 \alias{plot_tree_color}
 \title{Plot phylogenetic tree with colored branches}
 \usage{
-plot_tree_color(tree, data, unit, size = 0.3)
+plot_tree_color(tree, data, unit, rev = FALSE, size = 0.3)
 }
 \arguments{
 \item{tree}{An object of class \code{phylo}}
@@ -13,6 +13,9 @@ plot_tree_color(tree, data, unit, size = 0.3)
 assignment in the 1st column}
 
 \item{unit}{Branch length unit (e.g., subs/site and mya)}
+
+\item{rev}{A logical indicating whether to reverse the x-axis time scale
+(defaults to FALSE, e.g., 0, 1, 2, ...)}
 
 \item{size}{Branch thickness}
 }

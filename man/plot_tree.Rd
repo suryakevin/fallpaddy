@@ -4,12 +4,15 @@
 \alias{plot_tree}
 \title{Plot phylogenetic tree}
 \usage{
-plot_tree(tree, unit, size = 0.3)
+plot_tree(tree, unit, rev = FALSE, size = 0.3)
 }
 \arguments{
 \item{tree}{An object of class \code{phylo}}
 
 \item{unit}{Branch length unit (e.g., subs/site and mya)}
+
+\item{rev}{A logical indicating whether to reverse the x-axis time scale
+(defaults to FALSE, e.g., 0, 1, 2, ...)}
 
 \item{size}{Branch thickness}
 }
