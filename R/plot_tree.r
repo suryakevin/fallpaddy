@@ -14,7 +14,7 @@
 #'
 #' @import ggimage
 #'
-#' @importFrom ggtree ggtree theme_tree2
+#' @importFrom ggtree ggtree revts theme_tree2
 #'
 #' @export
 #'
@@ -55,7 +55,7 @@ plot_tree <- function(tree, unit, rev = FALSE, size = 0.3) {
 #'
 #' @import ggimage
 #'
-#' @importFrom ggtree ggtree groupOTU theme_tree2
+#' @importFrom ggtree ggtree groupOTU revts theme_tree2
 #' @importFrom rlang .data
 #' @importFrom stats reorder
 #'
