@@ -48,7 +48,7 @@ Explaining the diversity of life today and in the past is the grail of evolution
 
 But, the idea that ~100% of divergence happens during speciation is extreme. Rather than debating gradual versus punctuated scenarios, we can estimate how much the variability of a trait in a group is attributable to speciation events (0%–100%). Mark Pagel and colleagues at the University of Reading devised such methods (which we will review below) to infer that net speciation explains ~16% of the total molecular evolution in extant plants, fungi, and animals^4,5^. The method applies to any evolving system, including human languages^6^. Up to 33% of vocabulary differences are attributable to language-splitting events^6^. Punctuated evolution is, therefore, a widespread pattern in how genomes, phenotypes, and cultures evolve. We need to quantify this pattern.
 
-Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution. 
+Punctuated evolution alone does not explain the diversity of life, and it is not the only one proposed. For a brief overview of current hypotheses or models, I suggest reading Pagel et al.^7^. We should not treat the method for detecting punctuated evolution as a 'hammer' to resolve every problem. But, we can test the extent to which the pattern observable in a dataset is consistent with punctuated evolution.
 
 ## Why `fallpaddy`?
 
@@ -225,7 +225,7 @@ compare_models(models = models1, file = NULL)
 #> =========
 #> BIC Table
 #> =========
-#> 
+#>
 #>         model       BIC delta_BIC
 #> 1    path ~ 1 -19131.61     308.3
 #> 2 path ~ node -19439.91       0.0
