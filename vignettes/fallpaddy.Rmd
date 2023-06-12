@@ -71,8 +71,9 @@ Here, we will apply the standard Pagel et al.'s^5^ model to a molecular, extant-
 # Plot tree ----
 plot_tree(
   tree = tree_lepidosaur_mol,
-  unit = "expected number of substitutions per site"
+  unit = "expected number of DNA substitutions per site"
 )
+# If you encounter an error, try updating all your `R` packages
 ```
 
 This tree contains the information we need to detect punctuated evolution. The first task is to estimate the predicted difference in net molecular evolution between two lepidosaur species where one of them has undergone one additional net-speciation event^5^. A species' net-molecular divergence is proxied by its phylogenetic path length or root-to-tip distance. A net-speciation event is the cumulative number of branching events (i.e., node count) along a species' root-to-tip path. Net speciation is speciation minus extinction. So, we need to extract the path length and node count from the tree. See Pagel et al.'s^5^ Figure 1 for a simple schematic.
@@ -97,7 +98,7 @@ It is always good to plot the data before the analyses^11^. Benefits include fam
 # Plot data ----
 plot_data_2d(
   data = data1,
-  unit = "substitutions/site",
+  unit = "DNA substitutions/site",
   pt_size = 1,
   alpha = 0.15,
   plot_width = 8.33,  # width of the HTML document
@@ -126,7 +127,7 @@ data1 <- reorder_data(data = data1, tree = tree_squamate_mol)
 
 Next, we will fit regression models. The following two steps are necessary to run the models, but you need not fully understand them.
 
-```{r 1_prepare_matrices}
+```{r 1_prepare_matrices, eval = FALSE}
 # Decompose the phylogenetic variance-covariance matrix into its correlation
 #   (off-diagonal) and variance components (on-diagonal) ----
 vcv1 <- decomp_vcv(tree = tree_squamate_mol, lambda = 1)
@@ -135,11 +136,23 @@ vcv1 <- decomp_vcv(tree = tree_squamate_mol, lambda = 1)
 dmat1 <- create_dmat(tree = tree_squamate_mol)
 ```
 
+```{r 1_prepare_matrices_save_objects, eval = FALSE, echo = FALSE}
+# To decrease knitting time, I save the created objects above ----
+save(vcv1, file = "vcv1.RData")
+save(dmat1, file = "dmat1.RData")
+```
+
+```{r 1_prepare_matrices_load_objects, echo = FALSE}
+# To decrease knitting time, I load the created objects above ----
+load("vcv1.RData")  # vcv1
+load("dmat1.RData")  # dmat1
+```
+
 We can encode a phylogenetic tree as a variance-covariance matrix^12^, where each cell represents the shared amount of evolutionary history for a pair of species (covariance). Each cell on the matrix's diagonals is the path length (variance). In general, this matrix is how we account for species non-independence^13^ and unequal variance (differing path lengths). The function `decomp_vcv` decomposes the matrix into its off-diagonal and on-diagonal components necessary for the downstream function `fit_punc_model`. The `create_dmat` function generates the normalizing matrix $D$, which contributes to decorrelating the data. For more details regarding the generalization of a simple regression model to accommodate phylogenetic data, read Symonds and Blomberg^14^.
 
 Next, we fit a null, baseline model, regressing path length on itself (`path ~ 1` or $path = \beta_0 + \epsilon$, where $\beta_0$ is the state at the root of the tree [intercept], and $\epsilon$ is the residual error). This mean-only model is the simplest possible model. The estimates are the phylogenetically-normalized mean and variance of the path lengths (not the raw mean and variance). Another measure calculated here is the sum of squared total ($SST$), crucial for measuring how much node count explains path length in the next model.
 
-```{r 1_fit_null_model}
+```{r 1_fit_null_model, eval = FALSE}
 # Fit the null regression model ----
 null_model1 <- fit_punc_model(
   data = data1,
@@ -147,18 +160,30 @@ null_model1 <- fit_punc_model(
   D = dmat1,
   model = "p"  # path ~ 1
 )
+```
 
+```{r 1_fit_null_model_save_object, eval = FALSE, echo = FALSE}
+# To decrease knitting time, I save the created object above ----
+save(null_model1, file = "null_model1.RData")
+```
+
+```{r 1_fit_null_model_load_object, echo = FALSE}
+# To decrease knitting time, I load the created object above ----
+load("null_model1.RData")  # null_model1
+```
+
+```{r 1_show_null_model_outputs}
 # Print the model outputs ----
 summary(null_model1$model)
 null_model1$sig2  # variance
 null_model1$sse  # SST (or sum of squared estimates of error [SSE] of the null)
 ```
 
-The estimated mean path length or the net molecular divergence in Squamata is $0.578 \pm 0.045$ substitutions/site ($\bar{x} \pm 1.96 \times SEM$). We can change the unit to enhance interpretability (e.g., $578 \pm 45$ substitutions/1,000 sites). The estimated variance is $0.00698$ substitutions/site (or $6.98$ substitutions/1,000 sites). Taking the square root of the variance gives us the estimated standard deviation ($\hat{\sigma} = 0.0835$). This value means that the "average" difference between a path length and the expected value is $83.5$ substitutions/1,000 sites. Another way to view these numbers is that they are the expected mean and variance, assuming a strict molecular clock^15^. This clock model posits that substitutions accumulate gradually at a constant rate through time and across lineages.
+The estimated mean path length or the net molecular divergence in Squamata is $0.578 \pm 0.045$ DNA substitutions/site ($\bar{x} \pm 1.96 \times SEM$). We can change the unit to enhance interpretability (e.g., $578 \pm 45$ substitutions/1,000 sites). The estimated variance is $0.00698$ substitutions/site (or $6.98$ substitutions/1,000 sites). Taking the square root of the variance gives us the estimated standard deviation ($\hat{\sigma} = 0.0835$). This value means that the "average" difference between a path length and the expected value is $83.5$ substitutions/1,000 sites. Another way to view these numbers is that they are the expected mean and variance, assuming a strict molecular clock^15^. This clock model posits that substitutions accumulate gradually at a constant rate through time and across lineages.
 
 Now, we fit the alternative model, which assesses the degree of the punctuational effect. Punctuated evolution means that substitutions tend to accumulate during speciation events. If true, the evolutionary rate would not be clock-like. This model estimates the extent that node count drives deviations from the strict molecular clock (`path ~ node` or $path = \beta_0 + \beta_1node + \epsilon$, where $\beta_1$ is the node count effect).
 
-```{r 1_fit_alt_model}
+```{r 1_fit_alt_model, eval = FALSE}
 # Fit the alternative regression model ----
 alt_model1 <- fit_punc_model(
   data = data1,
@@ -166,7 +191,19 @@ alt_model1 <- fit_punc_model(
   D = dmat1,
   model = "pn"  # path ~ node
 )
+```
 
+```{r 1_fit_alt_model_save_object, eval = FALSE, echo = FALSE}
+# To decrease knitting time, I save the created object above ----
+save(alt_model1, file = "alt_model1.RData")
+```
+
+```{r 1_fit_alt_model_load_object, echo = FALSE}
+# To decrease knitting time, I load the created object above ----
+load("alt_model1.RData")  # alt_model1
+```
+
+```{r 1_show_alt_model_outputs}
 # Print the model outputs ----
 summary(alt_model1$model)
 alt_model1$sig2  # variance
@@ -218,7 +255,7 @@ About $10%$ of the total squamate molecular evolution is attributable to the det
 
 To prevent overfitting, we compare the fit of the alternative model against that of the null model using the Bayesian Information Criterion ($BIC$^17^). A $BIC$ score difference higher than two ($\Delta BIC>2$) represents positive evidence for the model with the lowest BIC score, the best-fitting one^18^.
 
-```{r 1_compare_models}
+```{r 1_compare_models, eval = FALSE}
 # Compare model fits with BIC
 models1 <- list(null_model1, alt_model1)
 compare_models(models = models1, file = NULL)
@@ -233,14 +270,26 @@ compare_models(models = models1, file = NULL)
 
 The regression model with node count as a predictor (alternative) has a much higher likelihood than the null model ($\Delta BIC=308.32$). We should keep node count as a predictor in the model.
 
-However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. Perhaps, an increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^19^ for more discussion)? Kozak et al.^20^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche. So, the dispersal and vicariance frequencies among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies. A good start would be a case study on the biogeography of Caribbean anole lizards^21^.
+However, note that the effect size, $R^2$, and the proportion of tree length attributable to the punctuational effect indicate that the detected punctuation pattern is weak to moderate at best. An increase in the predicted net molecular evolution of $4.0 \pm 0.5$ substitutions/1,000 sites for every additional net-speciation event may not be practically meaningful. If so, the question becomes why the punctuational effect is small in squamates broadly. Perhaps, the punctuation signal is undetectable when the phylogenetic tree is built using a dozen or so genes; a phylotranscriptomic or large-scale phylogenomic tree may be necessary. Potential statistical biases aside, the biological explanation likely lies in how speciation events typically occurred in Squamata. For example, does speciation usually happen by dispersal into new environments or passive vicariance (read Zink et al.^19^ for more discussion)? Kozak et al.^20^ argued that the rapid diversification of eastern North American woodland salamanders is non-adaptive, resulting from vicariant isolations that do not drive species to change their bioclimatic niche. So, the dispersal and vicariance frequencies among squamates may explain the low punctuational effect. Someone needs to estimate these frequencies. A good start would be a case study on the biogeography of Caribbean anole lizards^21^.
 
 We need to check for potential statistical biases. A crucial one is the node-density artifact: branches tend to be shorter than their actual lengths in undersampled parts of a phylogenetic tree^22^. This artifact can bias the regression model towards detecting punctuated evolution even if this is not true (i.e., false positive). A symptom of this artifact would be a positive curvilinear relationship between the node count and path length ($\delta > 1$; see below).
 
-```{r 1_test_node_density_artifact}
+```{r 1_test_node_density_artifact, eval = FALSE}
 # Test for the node-density artifact ----
 node_density1 <- est_node_density(data = data1, vcv_parts = vcv1)
+```
 
+```{r 1_test_node_density_artifact_save_object, eval = FALSE, echo = FALSE}
+# To decrease knitting time, I save the created object above ----
+save(node_density1, file = "node_density1.RData")
+```
+
+```{r 1_test_node_density_artifact_load_object, echo = FALSE}
+# To decrease knitting time, I load the created object above ----
+load("node_density1.RData")  # node_density1
+```
+
+```{r 1_show_node_density_model_outputs}
 # Print the model outputs ----
 summary(node_density1$model)
 node_density1$delta
@@ -250,7 +299,7 @@ I fitted a log-log model above ($\widehat{ln(node)} = \beta_0 + \beta_1ln(path) 
 
 ```{r 1_plot_node_density_test, fig.width = 4.75, fig.height = 2.94, fig.cap = "Fig 4: The node-density artifact, which can bias the regression analysis, does not seem to be present ($\\delta = 0.82$). A symptom of this artifact, in this case, would be a positive curvilinear relationship ($\\delta > 1$). The fit line seems off because it arises from data points normalized against their evolutionary history (i.e., phylogenetically corrected)."}
 # Plot the node-density test ----
-plot_node_density(data = data1, output_nd = node_density1, unit = "subs/site")
+plot_node_density(data = data1, output_nd = node_density1, unit = "DNA subs/site")
 ```
 
 <br/>
