@@ -316,6 +316,8 @@ The distribution of the phylogenetic residuals is close to normal, and we see li
 
 [...RESUME: Simulate...]
 
+[...Simulation: Compare the simulated vs. observed path length distribution...]
+
 [...UPDATE: GitHub repo...]
 
 ## 2. Body size evolution in mammals
