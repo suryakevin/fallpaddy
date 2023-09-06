@@ -54,7 +54,7 @@ single-branch or clade-wide rate shifts).
 \href{https://doi.org/10.1038/44766}{Pagel (1999)};
 \href{https://doi.org/10.1126/science.1129647}{Pagel et al. (2006)};
 \href{https://doi.org/10.1093/sysbio/syr029}{Stadler (2011)};
-\href{10.1016/j.jtbi.2015.09.005}{Paradis (2015)}
+\href{https://doi.org/10.1016/j.jtbi.2015.09.005}{Paradis (2015)}
 }
 \author{
 Kevin Surya
