@@ -47,7 +47,8 @@
 #'   \href{https://doi.org/10.1038/44766}{Pagel (1999)};
 #'   \href{https://doi.org/10.1126/science.1129647}{Pagel et al. (2006)};
 #'   \href{https://doi.org/10.1093/sysbio/syr029}{Stadler (2011)};
-#'   \href{https://doi.org/10.1016/j.jtbi.2015.09.005}{Paradis (2015)}
+#'   \href{https://doi.org/10.1016/j.jtbi.2015.09.005}{Paradis (2015)};
+#'   \href{https://doi.org/10.3389/fviro.2023.1066147}{Surya et al. (2023)}
 #'
 sim_punc <- function(
   n,
@@ -65,8 +66,8 @@ sim_punc <- function(
     tree_time$edge.length <-
       (tree_time$edge.length / max(nodeHeights(tree = tree_time)[, 2])) * age
     # simulates molecular/morphological tree
-    kappa <- 0.9917222 + (-1.5558826 * punc) + (1.1931311 * punc^2) +
-             (-0.6306910 * punc^3)  # see scribbles.r
+    kappa <- 0.9919699 + (-1.5655721 * punc) + (1.2208072 * punc^2) +
+             (-0.6489358 * punc^3)  # see Surya et al. (202X)
       # as 'punc' approaches zero, 'kappa' approaches one
       #   (no change in the timetree)
     tree_evol <- transformPhylo(phy = tree_time, model = "kappa", kappa = kappa)
@@ -81,7 +82,7 @@ sim_punc <- function(
   } else {
     # simulates non-ultrametric timetree
     birth <- runif(n = 1, min = 1, max = 5)
-    death <- birth - 0.15  # to avoid extreme scenarios
+    death <- birth - runif(n = 1, min = 0.01, max = 0.15)  # to mimic empirical trees
     tree_time <- rphylo(n = n, birth = birth, death = death, fossils = TRUE)
     if (length(tree_time$tip.label) > n) {
       tip_keep <- sample(x = tree_time$tip.label, size = n)
@@ -90,8 +91,8 @@ sim_punc <- function(
     tree_time$edge.length <-
       (tree_time$edge.length / max(nodeHeights(tree = tree_time)[, 2])) * age
     # simulates molecular/morphological tree
-    kappa <- 0.9978070 + (-1.4586438 * punc) + (0.8925897 * punc^2) +
-             (-0.4323218 * punc^3)
+    kappa <- 0.9976766 + (-1.4403441 * punc) + (0.8569546 * punc^2) +
+             (-0.4144971 * punc^3)
     tree_evol <- transformPhylo(phy = tree_time, model = "kappa", kappa = kappa)
     max_net_evol <- age * rate
     tree_evol$edge.length <-
