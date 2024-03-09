@@ -1,5 +1,7 @@
 # Detecting Punctuated Evolution in Dinosaurs and Viruses
 
+*The development of this package has been suspended indefinitely.*
+
 This package contains the tools to simulate, detect, and visualize punctuated
 evolution in any clades, from co-occurring species (e.g., present-day mammals)
 to serially-sampled viruses (e.g., SARS-CoV-2 genomes) and long-extinct taxa
