@@ -43,7 +43,7 @@ RoxygenNote: 7.2.3
 Depends:
     R (>= 2.10)
 LazyData: true
-Suggests: 
+Suggests:
     rmarkdown,
     knitr
 VignetteBuilder: knitr
